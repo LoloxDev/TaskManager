@@ -13,6 +13,6 @@ Installez les dépendances du projet en exécutant la commande suivante :
 
 npm i
 
-L'application sera accessible à l'adresse suivante : http://localhost:3000.
+L'application sera accessible à l'adresse suivante : http://localhost:3033.
 
 Pour accéder à l'application, utilisez le token suivant : tachemania.
