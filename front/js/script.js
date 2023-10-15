@@ -1,10 +1,10 @@
-const taskForm = document.getElementById('taskForm');
-const submitButton = document.getElementById('submitButton');
-const token = localStorage.getItem('token');
+const taskForm = document.getElementById('taskForm'); // Formulaire d'ajout de tâches
+const submitButton = document.getElementById('submitButton'); // Bouton submit d'ajout de tâches
+const token = localStorage.getItem('token'); // Récupération du token dans le localstorage
 
 let taskTable = 2; // 0 = tableau de tâches undone, 1 = tâches done, 2 = toutes les tâches
 
-taskForm.addEventListener('submit', function (event) {
+taskForm.addEventListener('submit', function (event) { // Création d'un nouvelle tâche
     event.preventDefault();
 
     const postData = {
@@ -42,7 +42,7 @@ taskForm.addEventListener('submit', function (event) {
             }, 1500);
         }
 
-        fetchAndDisplayTasks();
+        fetchAndDisplayTasks(); // On appelle la méthode qui raffraichit la liste 
     })
     .catch(error => {
         console.error('Erreur lors de l\'ajout de la tâche ou récupération des données :', error);
@@ -54,10 +54,12 @@ function createTaskRow(task, taskTable) {
 
     const row = document.createElement('tr');
 
+    // Colonne des ID
     const idCell = document.createElement('td');
     idCell.textContent = task.id;
     row.appendChild(idCell);
 
+    // Colonne du nom de la tâche
     const nameCell = document.createElement('td');
     const nameInput = document.createElement('input');
     nameCell.textContent = task.name;
@@ -68,6 +70,7 @@ function createTaskRow(task, taskTable) {
     nameCell.appendChild(nameInput);
     row.appendChild(nameCell);
 
+    // Colonne du statut de la tâche
     const statusCell = document.createElement('td');
     statusCell.textContent = task.isDone === 1 ? 'Terminée' : 'En attente';
     row.appendChild(statusCell);
@@ -75,12 +78,14 @@ function createTaskRow(task, taskTable) {
     // Colonne des boutons
     const buttonsCell = document.createElement('td');
 
-    // Modifier
+    // Bouton Modifier
     const editButton = document.createElement('button');
     const editIcon = document.createElement('i');
     editIcon.className = 'fa-solid fa-pen-to-square ';
     editButton.appendChild(editIcon);
     editButton.className = 'btn btn-primary tasksBtn';
+
+    // On gère la modification en affichant un input --> bouton enter pour valider
     editButton.addEventListener('click', function() {
         const nameCell = row.querySelector('td:nth-child(2)');
         const nameInput = nameCell.querySelector('.edit-task-input');
@@ -123,7 +128,7 @@ function createTaskRow(task, taskTable) {
     });
     buttonsCell.appendChild(editButton);
 
-    // Supprimer
+    // Bouton supprimer
     const deleteButton = document.createElement('button');
     const deleteIcon = document.createElement('i');
     const deleteConfirmButton = document.getElementById('confirmDeleteBtn')
@@ -133,14 +138,13 @@ function createTaskRow(task, taskTable) {
     deleteButton.appendChild(deleteIcon);
     deleteButton.className = 'btn btn-danger tasksBtn';
     deleteButton.addEventListener('click', function() {
-        const taskIdToDelete = task.id;
-        console.log(taskIdToDelete)
+        const taskIdToDelete = task.id; // Au clique, on récupère l'id de la tâche et on le transfert au bouton de la modale
         deleteConfirmButton.setAttribute('data-task-id', taskIdToDelete);
     });
 
     buttonsCell.appendChild(deleteButton);
 
-    // Marquer comme fait
+    // Bouton marquer comme fait
     if(task['isDone'] === 0){
         const markDoneButton = document.createElement('button');
         const markDoneIcon = document.createElement('i');
@@ -183,6 +187,7 @@ function createTaskRow(task, taskTable) {
     return row;
 }
 
+// Méthode qui actualise la liste des tâches ( En paramètre le status ( type de liste sur laquel on est ))
 function fetchAndDisplayTasks(status = null) {
     let url = `/tasks?token=${token}`;
 
@@ -208,21 +213,23 @@ function fetchAndDisplayTasks(status = null) {
             });
         })}
 
+// Les boutons de filtres ( liste undone, liste done, liste all )
 const filtersButtons = document.querySelectorAll('.filter-btn');
 
 filtersButtons.forEach(button => {
     button.addEventListener('click', function() {
-        taskTable = this.getAttribute('data-status').toString();
+        taskTable = this.getAttribute('data-status').toString(); // On récupère le data-status et on le transfert à la méthode qui actualise la liste
         fetchAndDisplayTasks(taskTable);
     });
 });
 
+// Boutons delete modale confirmation
 const deleteButtons = document.querySelectorAll('.delete-task-button');
 
 deleteButtons.forEach(deleteButton => {
     deleteButton.addEventListener('click', function() {
+        // On récupère l'id de la tache sur le bouton grâce à this.
         const taskId = this.getAttribute('data-task-id')
-
 
         fetch(`/deleteTask/${taskId}`, {
             method: 'DELETE',
