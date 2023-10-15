@@ -1,0 +1,24 @@
+{
+  "name": "tasks-project",
+  "version": "1.0.0",
+  "description": "Gestionnaire de taches - Projet individuel - API WebServices - Efrei",
+  "main": "back.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LoloxDev/TaskManager.git"
+  },
+  "author": "LABARRE Loris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LoloxDev/TaskManager/issues"
+  },
+  "homepage": "https://github.com/LoloxDev/TaskManager#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.1",
+    "nodemon": "^3.0.1"
+  }
+}
