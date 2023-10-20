@@ -102,14 +102,13 @@ function createTaskRow(task, taskTable) {
                         const postData = {
                             taskName: newName,
                             taskId: task.id,
-                            taskStatus:task.isDone,
                             token: token
                         };
                     
                         console.log('Données envoyées pour l\'édition de la tâche :', postData);
                     
                         fetch(`/editTask`, {
-                            method: 'POST',
+                            method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
