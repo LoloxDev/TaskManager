@@ -60,10 +60,10 @@ app.post('/addTask', (request, response) => {
     });
 });
 
-app.patch('/editTask', (request, response) => {
+app.post('/editTask', (request, response) => {
     const connection = get_connection_db();
-    const sql = 'UPDATE tasks SET name = ? WHERE id = ?';
-    connection.query(sql, [request.body.taskName, request.body.taskId], (error, results) => {
+    const sql = 'UPDATE tasks SET name = ?, isDone = ? WHERE id = ?';
+    connection.query(sql, [request.body.taskName, request.body.taskStatus, request.body.taskId], (error, results) => {
         connection.end();
         if (error) {
             console.error('Erreur lors de la modification de la tâche :', error);
