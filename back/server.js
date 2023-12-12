@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
 const port = 3033;
+// app.js
+
+require('dotenv').config({ path: '.env.local' });
+console.log(process.env)
+
 
 const { get_connection_db } = require('./connexion_bdd');
 const verifyToken = require('./verifyToken');
@@ -24,16 +29,13 @@ app.use(verifyToken);
 // Routes protégées nécessitant une authentification
 app.get('/tasks', (request, response) => {
     let connection = get_connection_db();
-        let sql = 'SELECT * FROM tasks';
-
-        if (request.query.status) {
-            if (request.query.status === '1') {
-                sql = 'SELECT * FROM tasks WHERE isDone = 1';
-            } else if (request.query.status === '0') {
-                sql = 'SELECT * FROM tasks WHERE isDone = 0';
-            }
-        }
-
+    let sql;
+    
+    if(request.query.status){
+        sql = `SELECT * FROM tasks WHERE isDone = ${request.query.status}`
+    } else {
+        sql = `SELECT * FROM tasks`
+    }
         connection.query(sql, function (error, results, fields) {
             connection.end();
             if (error) {

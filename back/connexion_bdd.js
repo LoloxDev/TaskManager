@@ -1,14 +1,26 @@
+// connexion_bdd.js
+
 const mysql = require('mysql2');
+const { Pool } = require('pg');
 
 function get_connection_db() {
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: "exojs"
-    });
+    const commonConfig = {
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD
+    };
 
-    return connection;
+    if (process.env.DB_TYPE === 'mysql') {
+        return mysql.createConnection({
+            ...commonConfig,
+        });
+    } else {
+        return new Pool({
+            ...commonConfig,
+            port: 5432,
+        });
+    }
 }
 
 module.exports = {

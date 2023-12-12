@@ -72,7 +72,7 @@ function createTaskRow(task, taskTable) {
 
     // Colonne du statut de la tâche
     const statusCell = document.createElement('td');
-    statusCell.textContent = task.isDone === 1 ? 'Terminée' : 'En attente';
+    statusCell.textContent = task.isDone === true ? 'Terminée' : 'En attente';
     row.appendChild(statusCell);
 
     // Colonne des boutons
@@ -145,7 +145,7 @@ function createTaskRow(task, taskTable) {
     buttonsCell.appendChild(deleteButton);
 
     // Bouton marquer comme fait
-    if(task['isDone'] === 0){
+    if(task['isDone'] === false){
         const markDoneButton = document.createElement('button');
         const markDoneIcon = document.createElement('i');
         markDoneIcon.className = 'fa-solid fa-check';
@@ -156,7 +156,7 @@ function createTaskRow(task, taskTable) {
             const postData = {
                 taskId: task.id,
                 taskName: task.name,
-                taskStatus: 1,
+                taskStatus: true,
                 token: token
             };
         
@@ -190,6 +190,19 @@ function createTaskRow(task, taskTable) {
 // Méthode qui actualise la liste des tâches ( En paramètre le status ( type de liste sur laquel on est ))
 function fetchAndDisplayTasks(status = null) {
     let url = `/tasks?token=${token}`;
+
+    switch (status) {
+      case 0:
+        status = false
+        break;
+      case 1:
+        status = true
+        break;
+      default:
+        status = null
+    }
+
+    console.log(status)
 
     // Ajoutez le paramètre status pour savoir sur quel liste nous sommes
     if (status !== null && status !== '2') {
