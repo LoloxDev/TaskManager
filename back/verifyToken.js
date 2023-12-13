@@ -14,7 +14,6 @@ function verifyToken(req, res, next) {
   if (token && token === "tachemania") {
     next();
   } else {
-    res.status(401).json({ error: 'Accès non autorisé' });
     res.redirect('/login');
   }
 }
