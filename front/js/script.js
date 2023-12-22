@@ -1,16 +1,76 @@
+const registerForm = document.getElementById('registerForm'); // Formulaire d'inscription
+console.log(registerForm)
 const taskForm = document.getElementById('taskForm'); // Formulaire d'ajout de tâches
 const submitButton = document.getElementById('submitButton'); // Bouton submit d'ajout de tâches
-const token = localStorage.getItem('token'); // Récupération du token dans le localstorage
 
 let taskTable = 2; // 0 = tableau de tâches undone, 1 = tâches done, 2 = toutes les tâches
 
-taskForm.addEventListener('submit', function (event) { // Création d'un nouvelle tâche
+// Méthode de modification de style des boutons selon succes
+function stylizeButton(button, success, message) {
+    if (success) {
+        // Modification de la couleur du bouton et son contenu pour informer l'utilisateur du succès
+        button.style.backgroundColor = 'green';
+        button.textContent = message || 'Opération réussie !';
+    } else {
+        // Modification de la couleur du bouton et son contenu pour informer l'utilisateur de l'échec
+        button.style.backgroundColor = 'red';
+        button.textContent = message || 'Échec de l\'opération';
+
+        setTimeout(() => {
+            button.style.backgroundColor = '';
+            button.textContent = 'Réessayer';
+        }, 1500);
+    }
+
+    setTimeout(() => {
+        button.style.backgroundColor = '';
+        button.textContent = 'Ajouter une tâche'; // ou un texte par défaut si besoin
+    }, 1500);
+}
+
+if (window.location.href.includes("inscription")){
+
+    // Ajout d'un nouvel utilisateur
+    registerForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const postData = {
+            firstName : registerForm.elements.firstName.value,
+            lastName : registerForm.elements.lastName.value,
+            email : registerForm.elements.email.value,
+            password : registerForm.elements.password.value
+        }
+
+        fetch(`../addUser`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            stylizeButton(submitButton, data.success, data.message);
+            if (data.success) {
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'ajout de l\'utilisateur ou récupération des données :', error);
+        });
+    })
+
+}
+
+// Création d'un nouvelle tâche
+taskForm.addEventListener('submit', function (event) { 
     event.preventDefault();
 
     const postData = {
         taskName: taskForm.elements.taskName.value,
         taskStatus: taskForm.elements.taskStatus.value,
-        token: token
     };
 
     fetch(`/addTask`, {
@@ -42,7 +102,7 @@ taskForm.addEventListener('submit', function (event) { // Création d'un nouvell
             }, 1500);
         }
 
-        fetchAndDisplayTasks(); // On appelle la méthode qui raffraichit la liste 
+        fetchAndDisplayTasks(postData.taskStatus); // On appelle la méthode qui raffraichit la liste 
     })
     .catch(error => {
         console.error('Erreur lors de l\'ajout de la tâche ou récupération des données :', error);
@@ -72,7 +132,7 @@ function createTaskRow(task, taskTable) {
 
     // Colonne du statut de la tâche
     const statusCell = document.createElement('td');
-    statusCell.textContent = task.isDone === true ? 'Terminée' : 'En attente';
+    statusCell.textContent = task.isdone === true ? 'Terminée' : 'En attente';
     row.appendChild(statusCell);
 
     // Colonne des boutons
@@ -103,7 +163,6 @@ function createTaskRow(task, taskTable) {
                             taskName: newName,
                             taskId: task.id,
                             taskStatus:task.isDone,
-                            token: token
                         };
                     
                         console.log('Données envoyées pour l\'édition de la tâche :', postData);
@@ -145,7 +204,7 @@ function createTaskRow(task, taskTable) {
     buttonsCell.appendChild(deleteButton);
 
     // Bouton marquer comme fait
-    if(task['isDone'] === false){
+    if(task['isdone'] === false){
         const markDoneButton = document.createElement('button');
         const markDoneIcon = document.createElement('i');
         markDoneIcon.className = 'fa-solid fa-check';
@@ -157,7 +216,6 @@ function createTaskRow(task, taskTable) {
                 taskId: task.id,
                 taskName: task.name,
                 taskStatus: true,
-                token: token
             };
         
             fetch(`/editTask`, {
@@ -189,14 +247,14 @@ function createTaskRow(task, taskTable) {
 
 // Méthode qui actualise la liste des tâches ( En paramètre le status ( type de liste sur laquel on est ))
 function fetchAndDisplayTasks(status = null) {
-    let url = `/tasks?token=${token}`;
+    let url = `/tasks`;
 
     switch (status) {
-      case 0:
-        status = false
-        break;
-      case 1:
+      case "1":
         status = true
+        break;
+      case "0":
+        status = false
         break;
       default:
         status = null
@@ -205,8 +263,8 @@ function fetchAndDisplayTasks(status = null) {
     console.log(status)
 
     // Ajoutez le paramètre status pour savoir sur quel liste nous sommes
-    if (status !== null && status !== '2') {
-        url += `&status=${status}`;
+    if (status !== null) {
+        url += `?status=${status}`;
     }
 
     fetch(url)
@@ -232,6 +290,7 @@ const filtersButtons = document.querySelectorAll('.filter-btn');
 filtersButtons.forEach(button => {
     button.addEventListener('click', function() {
         taskTable = this.getAttribute('data-status').toString(); // On récupère le data-status et on le transfert à la méthode qui actualise la liste
+console.log(taskTable)
         fetchAndDisplayTasks(taskTable);
     });
 });
@@ -248,7 +307,6 @@ deleteButtons.forEach(deleteButton => {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'token': token
             },
         })
         .then(response => response.json())
