@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const app = express();
 const port = 3033;
 
@@ -11,17 +12,57 @@ const path = require('path');
 
 const dbConnection = knex(knexConfig.development);
 
+// Configuration express-session
+app.use(session({
+    secret: 'votre_secret_key',
+    resave: true,
+    saveUninitialized: true
+  }));
+
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, '../front')));
+app.post('/login', express.urlencoded({ extended: false }), async (req, res) => {
+    const { email, password } = req.body;
+    
+
+    try {
+        console.log({email: email, password: password})
+        
+        const user = await dbConnection('users').where({email: email, password: password}).first();
+        console.log(user)
+        if (user) {
+            req.session.regenerate(function (err){
+            // Initialisez la session
+            req.session.authenticated = true;
+            req.session.user = user;
+            req.session.save(function (err) {
+                if (err) return next(err)
+                res.redirect('/')
+              })
+            })
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de l\'authentification :', error);
+        res.status(500).json({ message: 'error', success: false });
+    }
+});
+
+app.get('/user', (req, res) => {
+ console.log(req.session);
+ res.status(200).json({ message: 'error', success: false });
+});
+
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../front/security/login.html'));
+    res.sendFile(path.join(__dirname, '../front/login.html'));
 });
 
 app.get('/inscription', (req, res) => {
-    res.sendFile(path.join(__dirname, '../front/security/inscription.html'));
+    res.sendFile(path.join(__dirname, '../front/inscription.html'));
 });
+
+app.use(express.static(path.join(__dirname, '../front')));
 
 // Création de compte
 app.post('/addUser', async (request, response) => {

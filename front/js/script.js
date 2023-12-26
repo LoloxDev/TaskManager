@@ -1,12 +1,10 @@
-const registerForm = document.getElementById('registerForm'); // Formulaire d'inscription
-console.log(registerForm)
 const taskForm = document.getElementById('taskForm'); // Formulaire d'ajout de tâches
 const submitButton = document.getElementById('submitButton'); // Bouton submit d'ajout de tâches
 
 let taskTable = 2; // 0 = tableau de tâches undone, 1 = tâches done, 2 = toutes les tâches
 
 // Méthode de modification de style des boutons selon succes
-function stylizeButton(button, success, message) {
+export function stylizeButton(button, success, message) {
     if (success) {
         // Modification de la couleur du bouton et son contenu pour informer l'utilisateur du succès
         button.style.backgroundColor = 'green';
@@ -28,41 +26,14 @@ function stylizeButton(button, success, message) {
     }, 1500);
 }
 
-if (window.location.href.includes("inscription")){
-
-    // Ajout d'un nouvel utilisateur
-    registerForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const postData = {
-            firstName : registerForm.elements.firstName.value,
-            lastName : registerForm.elements.lastName.value,
-            email : registerForm.elements.email.value,
-            password : registerForm.elements.password.value
+document.getElementById('getUser').addEventListener('click', function(){
+    fetch(`/user`, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json'
         }
-
-        fetch(`../addUser`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            stylizeButton(submitButton, data.success, data.message);
-            if (data.success) {
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 1500);
-            }
-        })
-        .catch(error => {
-            console.error('Erreur lors de l\'ajout de l\'utilisateur ou récupération des données :', error);
-        });
     })
-
-}
+})
 
 // Création d'un nouvelle tâche
 taskForm.addEventListener('submit', function (event) { 
@@ -325,3 +296,5 @@ deleteButtons.forEach(deleteButton => {
 
 // Pour récupérer toutes les tâches
 fetchAndDisplayTasks();
+
+module.exports = maFonction;
