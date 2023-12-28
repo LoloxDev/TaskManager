@@ -26,9 +26,8 @@ app.post('/login', express.urlencoded({ extended: false }), async (req, res) => 
     
 
     try {
-        console.log({email: email, password: password})
         
-        const user = await dbConnection('users').where({email: email, password: password}).first();
+        const user = await dbConnection('users').where({email, password}).first();
         console.log(user)
         if (user) {
             req.session.regenerate(function (err){
@@ -48,11 +47,24 @@ app.post('/login', express.urlencoded({ extended: false }), async (req, res) => 
     }
 });
 
-app.get('/user', (req, res) => {
- console.log(req.session);
- res.status(200).json({ message: 'error', success: false });
-});
+// Middleware de vérification de connexion à un utilisateur
 
+const isConnected = (req, res, next) => {
+    if (req.session.authenticated) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
+
+app.get('/user', (req, res) => {
+    // Renvoie les données de session avec la réponse
+    res.status(200).json({
+        message: 'Utilisateur authentifié',
+        success: true,
+        user: req.session.user
+    });
+});
 
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/login.html'));
@@ -61,6 +73,8 @@ app.get('/login', (req, res) => {
 app.get('/inscription', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/inscription.html'));
 });
+
+app.use(isConnected); // Toutes les routes après cette ligne sont innaccessible sans authentificzation.
 
 app.use(express.static(path.join(__dirname, '../front')));
 
@@ -99,7 +113,7 @@ app.get('/tasks', async (request, response) => {
     }
 });
 
-app.post('/addTask', async (request, response) => {
+app.post('/addTask',  async (request, response) => {
     const task = {
         name: request.body.taskName,
         isdone: request.body.taskStatus,
@@ -115,7 +129,7 @@ app.post('/addTask', async (request, response) => {
     }
 });
 
-app.post('/editTask', async (request, response) => {
+app.post('/editTask',  async (request, response) => {
     const taskId = request.body.taskId;
     const task = {
         name: request.body.taskName,

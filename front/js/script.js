@@ -35,6 +35,33 @@ document.getElementById('getUser').addEventListener('click', function(){
     })
 })
 
+// Récupération des infos session utilisateur
+async function getUser() {
+    try {
+        const response = await fetch('/user');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des informations de session :', error);
+        throw error; // Vous pouvez gérer cette erreur de manière appropriée
+    }
+}
+
+getUser();
+
+// Personnalisation user
+async function personnaliserUtilisateur() {
+    try {
+        const userData = await getUser();
+        const navbarNav = document.getElementById('navbar-nav');
+        navbarNav.insertAdjacentHTML('afterbegin', `<li class="nav-item">Bienvenue ${userData.nom}</li>`);
+    } catch (error) {
+        console.error('Erreur lors de la personnalisation de l\'utilisateur :', error);
+    }
+}
+
+personnaliserUtilisateur()
+
 // Création d'un nouvelle tâche
 taskForm.addEventListener('submit', function (event) { 
     event.preventDefault();
