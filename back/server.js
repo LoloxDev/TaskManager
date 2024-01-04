@@ -64,7 +64,9 @@ app.get('/user', (req, res) => {
         success: true,
         user: req.session.user
     });
+    console.log(req.session);
 });
+
 
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/login.html'));

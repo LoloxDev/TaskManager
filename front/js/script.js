@@ -4,7 +4,7 @@ const submitButton = document.getElementById('submitButton'); // Bouton submit d
 let taskTable = 2; // 0 = tableau de tâches undone, 1 = tâches done, 2 = toutes les tâches
 
 // Méthode de modification de style des boutons selon succes
-export function stylizeButton(button, success, message) {
+function stylizeButton(button, success, message) {
     if (success) {
         // Modification de la couleur du bouton et son contenu pour informer l'utilisateur du succès
         button.style.backgroundColor = 'green';
@@ -40,27 +40,26 @@ async function getUser() {
     try {
         const response = await fetch('/user');
         const data = await response.json();
-        return data;
+        console.log(data.user);
+        return data.user;
     } catch (error) {
         console.error('Erreur lors de la récupération des informations de session :', error);
         throw error; // Vous pouvez gérer cette erreur de manière appropriée
     }
 }
 
-getUser();
-
 // Personnalisation user
 async function personnaliserUtilisateur() {
     try {
         const userData = await getUser();
         const navbarNav = document.getElementById('navbar-nav');
-        navbarNav.insertAdjacentHTML('afterbegin', `<li class="nav-item">Bienvenue ${userData.nom}</li>`);
+        navbarNav.insertAdjacentHTML('afterbegin', `<li class="nav-item"><a class="nav-link">Bienvenue ${userData['nom']}</a></li>`);
     } catch (error) {
         console.error('Erreur lors de la personnalisation de l\'utilisateur :', error);
     }
 }
 
-personnaliserUtilisateur()
+personnaliserUtilisateur();
 
 // Création d'un nouvelle tâche
 taskForm.addEventListener('submit', function (event) { 
@@ -324,4 +323,4 @@ deleteButtons.forEach(deleteButton => {
 // Pour récupérer toutes les tâches
 fetchAndDisplayTasks();
 
-module.exports = maFonction;
+//module.exports = maFonction;
