@@ -11105,7 +11105,7 @@ body {
     padding: 0;
   }
   .masthead h1, .masthead .h1 {
-    font-size: 6.5rem;
+    font-size: 4.5rem;
     line-height: 6.5rem;
     letter-spacing: 0.8rem;
   }
@@ -11221,4 +11221,14 @@ body {
 
 .edit-task-input{
   width: 100%;
+}
+
+#userMenuContainer {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  position: absolute;
+}
+
+#userMenuLi:hover #userMenuContainer {
+  opacity: 1;
 }

@@ -101,28 +101,48 @@ app.post('/addUser', async (request, response) => {
 
 app.get('/tasks', async (request, response) => {
     try {
-        let sql = dbConnection.select('*').from('tasks');
-
-        if (request.query.status) {
-            sql = sql.where('isdone', request.query.status);
+        // Assurez-vous que l'utilisateur est authentifié
+        if (!request.session.authenticated) {
+            return response.status(401).json({ error: 'Utilisateur non authentifié' });
         }
 
-        const results = await sql;
-        response.json(results);
+        // Récupérez les tâches associées à l'utilisateur depuis la table de jointure
+        let tasks = await dbConnection('user_tasks')
+            .join('tasks', 'user_tasks.task_id', '=', 'tasks.id')
+            .where('user_tasks.user_id', request.session.user.id)
+            .select('tasks.*');
+
+        // Filtrer les tâches par statut si spécifié dans la requête
+        if (request.query.status !== undefined) {
+            const status = request.query.status === 'true'; // Convertir en booléen
+            tasks = tasks.filter(task => task.isdone === status);
+        }
+
+        response.json(tasks);
     } catch (error) {
         console.error('Erreur lors de la récupération des tâches :', error);
         response.status(500).json({ error: 'Erreur lors de la récupération des tâches' });
     }
 });
 
-app.post('/addTask',  async (request, response) => {
+
+app.post('/addTask', async (request, response) => {
     const task = {
         name: request.body.taskName,
         isdone: request.body.taskStatus,
     };
 
     try {
-        await dbConnection('tasks').insert(task);
+        // Insérez la tâche et récupérez l'ID généré par la base de données
+        const [newTaskIdObject] = await dbConnection('tasks').insert(task).returning('id');
+        const taskId = newTaskIdObject.id;
+
+        // Associez la tâche à l'utilisateur actuel en utilisant l'ID généré
+        await dbConnection('user_tasks').insert({
+            user_id: request.session.user.id,
+            task_id: taskId,
+        });
+
         console.log('Tâche ajoutée avec succès !');
         response.status(200).json({ message: 'Tâche ajoutée avec succès', success: true });
     } catch (error) {
@@ -130,6 +150,11 @@ app.post('/addTask',  async (request, response) => {
         response.status(500).json({ error: 'Erreur lors de l\'ajout de la tâche', success: false, sqlError: error.sqlMessage });
     }
 });
+
+
+
+
+
 
 app.post('/editTask',  async (request, response) => {
     const taskId = request.body.taskId;

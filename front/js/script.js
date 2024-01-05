@@ -52,8 +52,23 @@ async function getUser() {
 async function personnaliserUtilisateur() {
     try {
         const userData = await getUser();
-        const navbarNav = document.getElementById('navbar-nav');
-        navbarNav.insertAdjacentHTML('afterbegin', `<li class="nav-item"><a class="nav-link">Bienvenue ${userData['nom']}</a></li>`);
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenuLi = document.getElementById('userMenuLi');
+        userMenuButton.textContent += userData['prenom'];
+
+        const userMenu = document.getElementById('userMenu');
+
+        // Ajoutez la classe de transition et commencez l'apparition lorsque la souris survole le bouton
+        userMenuLi.addEventListener('mouseenter', function () {
+            userMenu.classList.add('fade-transition');
+        });
+
+        // Commencez la disparition et retirez la classe de transition lorsque la souris quitte le bouton
+        userMenuLi.addEventListener('mouseleave', function () {
+            userMenu.classList.remove('fade-transition');
+        });
+
+
     } catch (error) {
         console.error('Erreur lors de la personnalisation de l\'utilisateur :', error);
     }
@@ -61,7 +76,7 @@ async function personnaliserUtilisateur() {
 
 personnaliserUtilisateur();
 
-// Création d'un nouvelle tâche
+// Création d'une nouvelle tâche
 taskForm.addEventListener('submit', function (event) { 
     event.preventDefault();
 
@@ -80,6 +95,9 @@ taskForm.addEventListener('submit', function (event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Utilisez data.taskId pour d'autres opérations côté client
+            console.log('ID de la tâche ajoutée :', data.taskId);
+
             // Modification de la couleur du bouton et son contenu pour informer l'utilisateur du succès / echec
             submitButton.style.backgroundColor = 'green';
             submitButton.textContent = 'Tache ajoutée avec succès !';
@@ -99,7 +117,7 @@ taskForm.addEventListener('submit', function (event) {
             }, 1500);
         }
 
-        fetchAndDisplayTasks(postData.taskStatus); // On appelle la méthode qui raffraichit la liste 
+        fetchAndDisplayTasks(postData.taskStatus); // On appelle la méthode qui rafraîchit la liste 
     })
     .catch(error => {
         console.error('Erreur lors de l\'ajout de la tâche ou récupération des données :', error);
