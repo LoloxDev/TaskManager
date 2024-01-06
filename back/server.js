@@ -90,14 +90,25 @@ app.post('/addUser', async (request, response) => {
     };
 
     try {
-        await dbConnection('users').insert(user);
-        console.log('User ajouté avec succès !');
-        response.status(200).json({ message: 'User ajouté avec succès', success: true });
+        // Vérifier si l'email existe déjà en base
+        const existingUser = await dbConnection('users').where('email', user.email).first();
+
+        if (existingUser) {
+            // L'email existe déjà, renvoyer un message
+            console.log('Email déjà utilisé');
+            response.status(400).json({ error: 'Cet email est déjà utilisé', success: false });
+        } else {
+            // L'email n'existe pas, ajouter l'utilisateur
+            await dbConnection('users').insert(user);
+            console.log('User ajouté avec succès !');
+            response.status(200).json({ message: 'User ajouté avec succès', success: true });
+        }
     } catch (error) {
         console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
         response.status(500).json({ error: 'Erreur lors de l\'ajout de l\'utilisateur', success: false, sqlError: error.sqlMessage });
     }
 });
+
 
 app.get('/tasks', async (request, response) => {
     try {

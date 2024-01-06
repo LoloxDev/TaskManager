@@ -49,3 +49,9 @@ L'application sera accessible à l'adresse suivante : http://localhost:3033.
 Pour accéder à l'application, utilisez le token suivant : tachemania.
 
 
+A venir dans les prochaines versions :
+
+    - Possibilité d'affecter un autre utilisateur à une tache
+    - Menu utilisateur : Se déconnecter / Mon profil / ...
+    -
+

@@ -6,7 +6,8 @@ const loginForm = document.getElementById('loginForm');
 //import { stylizeButton } from './script.js';
 
 // Pour le formulaire d'inscription
-if (registerForm){
+if (registerForm) {
+    
     registerForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -29,6 +30,13 @@ if (registerForm){
             if (data.success) {
                 // Redirigez l'utilisateur vers la page de connexion après une inscription réussie
                 window.location.href = '/login';
+            } else {
+                // Si la réponse n'est pas un succès, affichez un message d'erreur à l'utilisateur
+                console.error('Erreur lors de l\'ajout de l\'utilisateur :', data.error);
+                if (data.error === 'Cet email est déjà utilisé') {
+                    // Afficher un message à l'utilisateur indiquant que l'email existe déjà
+                    alert('Cet email est déjà utilisé. Veuillez utiliser un autre email.');
+                }
             }
         })
         .catch(error => {
@@ -36,4 +44,3 @@ if (registerForm){
         });
     });
 }
-
