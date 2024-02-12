@@ -76,10 +76,6 @@ app.get('/inscription', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/inscription.html'));
 });
 
-app.use(isConnected); // Toutes les routes après cette ligne sont innaccessible sans authentificzation.
-
-app.use(express.static(path.join(__dirname, '../front')));
-
 // Création de compte
 app.post('/addUser', async (request, response) => {
     const user = {
@@ -109,6 +105,21 @@ app.post('/addUser', async (request, response) => {
     }
 });
 
+app.use(isConnected); // Toutes les routes après cette ligne sont innaccessible sans authentificzation.
+
+app.use(express.static(path.join(__dirname, '../front')));
+
+app.get('/logout', function (req, res, next) {
+    req.session.user = null
+    req.session.save(function (err) {
+      if (err) next(err)
+  
+      req.session.regenerate(function (err) {
+        if (err) next(err)
+        res.redirect('/login')
+      })
+    })
+})
 
 app.get('/tasks', async (request, response) => {
     try {
@@ -161,11 +172,6 @@ app.post('/addTask', async (request, response) => {
         response.status(500).json({ error: 'Erreur lors de l\'ajout de la tâche', success: false, sqlError: error.sqlMessage });
     }
 });
-
-
-
-
-
 
 app.post('/editTask',  async (request, response) => {
     const taskId = request.body.taskId;

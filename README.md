@@ -29,9 +29,13 @@ Pour accéder à la BDD depuis PSQL ( terminal ) :
 
 podman exec -it postgres psql -U postgres
 
+OU
+
+docker exec -it postgres psql -U postgres
+
 Pour créer la BDD sur une nouvelle machine :
 
-podman exec -i postgres psql -U postgres < init.sql
+podman exec -i postgres psql -U postgres < initpg.sql
 
 Pour tester une requête SQL depuis la console : 
 
