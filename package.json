@@ -4,7 +4,8 @@
   "description": "Gestionnaire de taches - Projet individuel - API WebServices - Efrei",
   "main": "back.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon back/server.js"
   },
   "repository": {
     "type": "git",

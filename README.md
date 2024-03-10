@@ -25,7 +25,7 @@ npm install
 Pour lancer le serveur Node.js, utilisez la commande suivante :
 
 ```bash
-npx nodemon back/server
+npm start
 ```
 
 ## Gestion de la base de données
@@ -51,7 +51,7 @@ docker exec -it postgres psql -U postgres
 - Pour créer la base de données sur une nouvelle machine ( Normalement le script est éxécuté la première fois ) :
 
 ```bash
-docker exec -i postgres psql -U postgres < initpg.sql
+docker exec -i postgres sh -c '/bin/bash /docker-entrypoint-initdb.d/init.sh'
 ```
 
 - Pour tester une requête SQL depuis la console :
