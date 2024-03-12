@@ -9,6 +9,7 @@ console.log(process.env);
 const knex = require('knex');
 const knexConfig = require('../knexfile');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 const dbConnection = knex(knexConfig.development);
 
@@ -17,28 +18,41 @@ app.use(session({
     secret: 'votre_secret_key',
     resave: true,
     saveUninitialized: true
-  }));
+}));
 
 app.use(express.json());
 
 app.post('/login', express.urlencoded({ extended: false }), async (req, res) => {
     const { email, password } = req.body;
-    
-
     try {
-        
-        const user = await dbConnection('users').where({email, password}).first();
-        console.log(user)
+        const user = await dbConnection('users').where({ email, password }).first();
+
         if (user) {
-            req.session.regenerate(function (err){
-            // Initialisez la session
-            req.session.authenticated = true;
-            req.session.user = user;
-            req.session.save(function (err) {
-                if (err) return next(err)
-                res.redirect('/')
-              })
-            })
+        
+            // Vérification du mot de passe
+            const hashedPassword = user.password;
+            verifyPassword(password, hashedPassword)
+                .then(match => {
+                    if (match) {
+                        console.log('Mot de passe correct');
+                        req.session.regenerate(function (err) {
+                            // Initialisez la session
+                            req.session.authenticated = true;
+                            req.session.user = user;
+                            req.session.save(function (err) {
+                                if (err) return next(err)
+                                res.redirect('/')
+                            })
+                        })
+                    } else {
+                        console.log('Mot de passe incorrect');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la vérification du mot de passe :', error);
+                });
+            console.log(user)
+
         }
 
     } catch (error) {
@@ -48,7 +62,6 @@ app.post('/login', express.urlencoded({ extended: false }), async (req, res) => 
 });
 
 // Middleware de vérification de connexion à un utilisateur
-
 const isConnected = (req, res, next) => {
     if (req.session.authenticated) {
         next();
@@ -57,7 +70,16 @@ const isConnected = (req, res, next) => {
     }
 };
 
-app.get('/user', (req, res) => {
+// Middleware pour servir les fichiers statiques uniquement aux utilisateurs authentifiés
+const serveStaticAuthenticated = (req, res, next) => {
+    if (req.session.authenticated) {
+        express.static(path.join(__dirname, '../front'))(req, res, next);
+    } else {
+        res.redirect('/login');
+    }
+};
+
+app.get('/user', isConnected, (req, res) => {
     // Renvoie les données de session avec la réponse
     res.status(200).json({
         message: 'Utilisateur authentifié',
@@ -67,7 +89,6 @@ app.get('/user', (req, res) => {
     console.log(req.session);
 });
 
-
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/login.html'));
 });
@@ -76,7 +97,36 @@ app.get('/inscription', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/inscription.html'));
 });
 
-// Création de compte
+
+///////////////////////////////////////////////////////////////////////////////// SECUTITE APPLICATIVE ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// Fonction pour hacher un mot de passe
+const hashPassword = async (password) => {
+    try {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        return hashedPassword;
+    } catch (error) {
+        console.error('Erreur lors du hachage du mot de passe :', error);
+        throw error;
+    }
+};
+
+// Fonction pour vérifier un mot de passe haché
+const verifyPassword = async (password, hashedPassword) => {
+    try {
+        const match = await bcrypt.compare(password, hashedPassword);
+        return match;
+    } catch (error) {
+        console.error('Erreur lors de la vérification du mot de passe :', error);
+        throw error;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////// SECUTITE APPLICATIVE //////////////////////////////////////////////////////////////////////////////////////////
+
+
 app.post('/addUser', async (request, response) => {
     const user = {
         nom: request.body.firstName,
@@ -94,40 +144,50 @@ app.post('/addUser', async (request, response) => {
             console.log('Email déjà utilisé');
             response.status(400).json({ error: 'Cet email est déjà utilisé', success: false });
         } else {
-            // L'email n'existe pas, ajouter l'utilisateur
-            await dbConnection('users').insert(user);
-            console.log('User ajouté avec succès !');
-            response.status(200).json({ message: 'User ajouté avec succès', success: true });
+            // Hacher le mot de passe avant de l'insérer dans la base de données
+            hashPassword(user.password)
+                .then(hashedPassword => {
+                    // Insérer l'utilisateur avec le mot de passe haché
+                    return dbConnection('users').insert({
+                        nom: user.nom,
+                        prenom: user.prenom,
+                        email: user.email,
+                        password: hashedPassword
+                    });
+                })
+                .then(() => {
+                    console.log('Utilisateur ajouté avec succès !');
+                    response.status(200).json({ message: 'Utilisateur ajouté avec succès', success: true });
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
+                    response.status(500).json({ error: 'Erreur lors de l\'ajout de l\'utilisateur', success: false, sqlError: error.sqlMessage });
+                });
         }
     } catch (error) {
-        console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
-        response.status(500).json({ error: 'Erreur lors de l\'ajout de l\'utilisateur', success: false, sqlError: error.sqlMessage });
+        console.error('Erreur lors de la vérification de l\'email existant :', error);
+        response.status(500).json({ error: 'Erreur lors de la vérification de l\'email existant', success: false, sqlError: error.sqlMessage });
     }
 });
 
-app.use(isConnected); // Toutes les routes après cette ligne sont innaccessible sans authentificzation.
 
-app.use(express.static(path.join(__dirname, '../front')));
+// Utilisez le middleware pour servir les fichiers statiques uniquement aux utilisateurs authentifiés
+app.use(serveStaticAuthenticated);
 
 app.get('/logout', function (req, res, next) {
     req.session.user = null
     req.session.save(function (err) {
-      if (err) next(err)
-  
-      req.session.regenerate(function (err) {
         if (err) next(err)
-        res.redirect('/login')
-      })
+
+        req.session.regenerate(function (err) {
+            if (err) next(err)
+            res.redirect('/login')
+        })
     })
-})
+});
 
-app.get('/tasks', async (request, response) => {
+app.get('/tasks', isConnected, async (request, response) => {
     try {
-        // Assurez-vous que l'utilisateur est authentifié
-        if (!request.session.authenticated) {
-            return response.status(401).json({ error: 'Utilisateur non authentifié' });
-        }
-
         // Récupérez les tâches associées à l'utilisateur depuis la table de jointure
         let tasks = await dbConnection('user_tasks')
             .join('tasks', 'user_tasks.task_id', '=', 'tasks.id')
@@ -147,8 +207,7 @@ app.get('/tasks', async (request, response) => {
     }
 });
 
-
-app.post('/addTask', async (request, response) => {
+app.post('/addTask', isConnected, async (request, response) => {
     const task = {
         name: request.body.taskName,
         isdone: request.body.taskStatus,
@@ -173,7 +232,7 @@ app.post('/addTask', async (request, response) => {
     }
 });
 
-app.post('/editTask',  async (request, response) => {
+app.post('/editTask', isConnected, async (request, response) => {
     const taskId = request.body.taskId;
     const task = {
         name: request.body.taskName,
@@ -190,7 +249,7 @@ app.post('/editTask',  async (request, response) => {
     }
 });
 
-app.delete('/deleteTask/:id', async (request, response) => {
+app.delete('/deleteTask/:id', isConnected, async (request, response) => {
     const taskId = request.params.id;
 
     try {
