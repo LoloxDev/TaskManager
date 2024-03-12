@@ -1,10 +1,10 @@
-#!/bin/bash
-
 if [ "$DB_TYPE" == "mysql" ]; then
-    mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $MYSQL_HOST $MYSQL_DATABASE < /docker-entrypoint-initdb.d/initsql.sql
-elif [ "$DB_TYPE" == "pg" ]; then
-    psql -U postgres -d taskmanager -a -f /docker-entrypoint-initdb.d/initpg.sql
+    echo "Base de donnée MYSQL détéctée. ✅"
+    mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $MYSQL_HOST $MYSQL_DATABASE < ./db-init/initsql.sql
+elif [ "$DB_TYPE" == "postgres" ]; then
+    echo "Base de donnée POSTGRES détéctée. ✅"
+    psql -U postgres -d taskmanager -a -f /docker-entrypoint-initdb.d/db-init/initpg.sql
 else
-    echo "Unknown or unset DB_TYPE. Exiting."
+    echo "Base de donnée non reconnue! ❌"
     exit 1
 fi

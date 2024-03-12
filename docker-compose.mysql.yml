@@ -1,0 +1,15 @@
+services:
+  mon_postgres:
+    image: mysql
+    container_name: mysql
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DB_TYPE=${DB_TYPE}
+    volumes:
+      - .data:/var/lib
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: always

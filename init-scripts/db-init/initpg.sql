@@ -1,9 +1,3 @@
--- Suppression de la base de données si elle existe
-DROP DATABASE IF EXISTS taskmanager;
-
--- Création de la base de données
-CREATE DATABASE taskmanager;
-
 -- Connexion à la base de données taskmanager
 \c taskmanager;
 
