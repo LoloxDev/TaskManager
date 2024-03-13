@@ -7,7 +7,7 @@ require('dotenv').config({ path: '.env.local' });
 console.log(process.env);
 
 const knex = require('knex');
-const knexConfig = require('../knexfile');
+const knexConfig = require('./config/knexfile');
 const path = require('path');
 
 const dbConnection = knex(knexConfig.development);
