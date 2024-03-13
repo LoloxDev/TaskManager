@@ -68,7 +68,7 @@
     <div class="container register-container">
         <div class="register-form">
             <h2 class="text-center mb-4">Inscription</h2>
-            <form id="registerForm">
+            <form id="registerForm" action="/auth/register" method="POST">
                 <div class="mb-3">
                     <input type="text" class="form-control" placeholder="Nom" id="firstName" name="firstName" required>
                 </div>
@@ -81,7 +81,7 @@
                 <div class="mb-3">
                     <input type="password" class="form-control" placeholder="Mot de passe" id="password" name="password" required>
                 </div>
-                <button id="submitButton" type="submit" class="btn btn-success btn-block signup-btn">S'inscrire</button>
+                <button type="submit" class="btn btn-success btn-block signup-btn">S'inscrire</button>
             </form>
         </div>
     </div>
