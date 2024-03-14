@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Middleware pour servir les fichiers statiques
-app.use(express.static(path.join(__dirname, '../public/pages')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Middleware pour les routes d'authentification
 app.use('/auth', authRoutes);

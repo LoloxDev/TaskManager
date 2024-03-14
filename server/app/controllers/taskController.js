@@ -1,4 +1,5 @@
-const dbConnection = require('../../config/db'); // Importez la connexion à la base de données depuis votre configuration
+const dbConnection = require('../../config/db');
+const taskModel = require('../models/taskModel');
 
 // Récupérer toutes les tâches de l'utilisateur
 exports.getAllTasks = async (req, res) => {
@@ -9,10 +10,7 @@ exports.getAllTasks = async (req, res) => {
         }
 
         // Récupérez les tâches associées à l'utilisateur depuis la table de jointure
-        let tasks = await dbConnection('user_tasks')
-            .join('tasks', 'user_tasks.task_id', '=', 'tasks.id')
-            .where('user_tasks.user_id', req.session.user.id)
-            .select('tasks.*');
+        let tasks = await taskModel.getAllTasksByUserId(req.session.user.id);
 
         // Filtrer les tâches par statut si spécifié dans la requête
         if (req.query.status !== undefined) {
@@ -36,15 +34,7 @@ exports.addTask = async (req, res) => {
     };
 
     try {
-        // Insérez la tâche et récupérez l'ID généré par la base de données
-        const [newTaskIdObject] = await dbConnection('tasks').insert(task).returning('id');
-        const taskId = newTaskIdObject.id;
-
-        // Associez la tâche à l'utilisateur actuel en utilisant l'ID généré
-        await dbConnection('user_tasks').insert({
-            user_id: req.session.user.id,
-            task_id: taskId,
-        });
+        await taskModel.addTaskForUser(task, req.session.user.id);
 
         res.status(200).json({ message: 'Tâche ajoutée avec succès', success: true });
     } catch (error) {
@@ -62,7 +52,7 @@ exports.editTask = async (req, res) => {
     };
 
     try {
-        await dbConnection('tasks').where('id', taskId).update(task);
+        await taskModel.editTask(taskId, task);
         res.status(200).json({ message: 'Tâche modifiée avec succès', success: true });
     } catch (error) {
         console.error('Erreur lors de la modification de la tâche :', error);
@@ -75,7 +65,7 @@ exports.deleteTask = async (req, res) => {
     const taskId = req.params.id;
 
     try {
-        await dbConnection('tasks').where('id', taskId).del();
+        await taskModel.deleteTask(taskId);
         res.status(200).json({ message: 'Tâche supprimée avec succès', success: true });
     } catch (error) {
         console.error('Erreur lors de la suppression de la tâche :', error);
