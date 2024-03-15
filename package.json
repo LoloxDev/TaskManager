@@ -4,7 +4,7 @@
   "description": "Gestionnaire de taches - Projet individuel - API WebServices - Efrei",
   "main": "back.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "nodemon server/server"
   },
   "repository": {
@@ -28,6 +28,11 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.1",
     "nodemon": "^3.0.2",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "uninstall": "^0.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
   }
 }
