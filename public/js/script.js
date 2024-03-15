@@ -285,7 +285,7 @@ function fetchAndDisplayTasks(status = null) {
     fetch(url)
         .then(response => {
             if (response.status === 401) {
-              window.location.href = 'login.html'; // Redirigez l'utilisateur vers la page de connexion
+              window.location.href = '/login'; // Redirigez l'utilisateur vers la page de connexion
             }
             return response.json();
         })

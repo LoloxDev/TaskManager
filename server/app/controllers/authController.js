@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
         // L'email n'existe pas, ajouter l'utilisateur
         await userModel.addUser(userData);
         console.log('Utilisateur ajouté avec succès !');
-        res.redirect('/pages/login.html?success=true');
+        res.redirect('/login?success=true');
     } catch (error) {
         console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
         res.status(500).json({ error: 'Erreur lors de l\'ajout de l\'utilisateur', success: false, sqlError: error.sqlMessage });
@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
                         console.error('Erreur lors de la sauvegarde de la session :', err);
                         return res.status(500).json({ error: 'Erreur lors de la connexion', success: false });
                     }
-                    res.redirect('../pages/taskPanel.html');
+                    res.redirect('/taskPanel');
                 });
             });
         } else {

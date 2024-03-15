@@ -11,10 +11,15 @@ const bodyParser = require('body-parser');
 const authRoutes = require('./app/routes/authRoutes');
 const taskRoutes = require('./app/routes/taskRoutes');
 const userRoutes = require('./app/routes/userRoutes');
+const frontRoute = require('./app/routes/frontRoutes');
 
 // Initialisation de l'application Express
 const app = express();
 const port = process.env.PORT || 3033;
+
+// Configuration du moteur de template EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, './app/views'));
 
 // Configuration de la session
 app.use(session({
@@ -34,6 +39,9 @@ app.use(express.json());
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Middleware pour les routes front
+app.use('/', frontRoute);
 
 // Middleware pour les routes d'authentification
 app.use('/auth', authRoutes);
