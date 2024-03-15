@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS user_tasks (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
     task_id INTEGER REFERENCES tasks(id)
+    ON DELETE CASCADE
 );
 
 -- Structure de la table `groups`

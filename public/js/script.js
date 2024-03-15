@@ -85,7 +85,7 @@ taskForm.addEventListener('submit', function (event) {
         taskStatus: taskForm.elements.taskStatus.value,
     };
 
-    fetch(`/addTask`, {
+    fetch(`/tasks/tasks`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -182,8 +182,8 @@ function createTaskRow(task, taskTable) {
                     
                         console.log('Données envoyées pour l\'édition de la tâche :', postData);
                     
-                        fetch(`/editTask`, {
-                            method: 'POST',
+                        fetch('/tasks/tasks/${postData.taskId}', {
+                            method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -233,8 +233,8 @@ function createTaskRow(task, taskTable) {
                 taskStatus: true,
             };
         
-            fetch(`/editTask`, {
-                method: 'POST',
+            fetch(`/tasks/tasks/${postData.taskId}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -262,7 +262,7 @@ function createTaskRow(task, taskTable) {
 
 // Méthode qui actualise la liste des tâches ( En paramètre le status ( type de liste sur laquel on est ))
 function fetchAndDisplayTasks(status = null) {
-    let url = `/tasks`;
+    let url = `/tasks/tasks`;
 
     switch (status) {
       case "1":
@@ -318,7 +318,7 @@ deleteButtons.forEach(deleteButton => {
         // On récupère l'id de la tache sur le bouton grâce à this.
         const taskId = this.getAttribute('data-task-id')
 
-        fetch(`/deleteTask/${taskId}`, {
+        fetch(`/tasks/tasks/${taskId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
