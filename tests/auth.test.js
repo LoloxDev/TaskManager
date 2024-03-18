@@ -1,29 +1,23 @@
-// Importez les dépendances nécessaires
 const request = require('supertest');
 const express = require('express');
 const session = require('express-session');
-const controller = require('../server/app/controllers/authController');
-const userModel = require('../server/app/models/userModel.js');
+const authRoutes = require('../server/app/routes/authRoutes');
+const userModel = require('../server/app/models/userModel');
 const bcrypt = require('bcrypt');
 
-// Importez votre application Express
 const app = express();
 
-// Configurez l'application Express
 app.use(express.json());
 app.use(session({ secret: 'votre_secret_key', resave: false, saveUninitialized: false }));
 
-// Importez les routes à tester
-const authRoutes = require('../server/app/routes/authRoutes');
-
-// Utilisez les routes importées dans votre application Express
 app.use('/auth', authRoutes);
 
-// Définissez les mocks nécessaires
 jest.mock('../server/app/models/userModel');
 
 describe('Tests des routes authentification', () => {
-    // Simulez une session utilisateur
+
+/* SI NEED UNE SESSION USER, UTILISER LE CODE SUIVANT :
+
     function simulateUserSession() {
         return function (req, res, next) {
             req.session.authenticated = true;
@@ -37,30 +31,62 @@ describe('Tests des routes authentification', () => {
         };
     }
 
-    // Définissez les tests
+*/
     describe('Authentication Controller', () => {
         afterEach(() => {
             jest.clearAllMocks();
         });
 
         describe('register', () => {
-            it('should register a new user', async () => {
-                // Implémentez votre test ici
+            it('Doit inscrire un utilisateur Alice', async () => {
+                const userData = {
+                    firstName: 'Alice',
+                    lastName: 'Smith',
+                    email: 'alice.smith@example.com',
+                    password: 'password123'
+                };
+
+                const response = await request(app)
+                    .post('/auth/register')
+                    .send(userData);
+
+                expect(response.status).toBe(200);
             });
         });
 
         describe('login', () => {
-            it('should log in a user with valid credentials', async () => {
-                // Implémentez votre test ici
+            it('Doit se connecter à l\'utilisateur John Doe', async () => {
+                const userData = {
+                    email: 'john.doe@example.com',
+                    password: 'password123' 
+                };
+
+                const response = await request(app)
+                    .post('/auth/login')
+                    .send(userData);
+
+                expect(response.status).toBe(200);
+            });
+
+            it('Doit fail à la connexion car identifiants invalides', async () => {
+                const userData = {
+                    email: 'john.doe@example.com',
+                    password: 'wrongpassword'
+                };
+
+                const response = await request(app)
+                    .post('/auth/login')
+                    .send(userData);
+
+                expect(response.status).toBe(401);
             });
         });
     });
 
-    // Définissez les hooks pour démarrer et arrêter le serveur
     let server;
     beforeAll((done) => {
-        server = app.listen(3033, () => {
-            console.log('Serveur démarré sur le port 3033');
+        server = app.listen(3030, () => {
+            console.log('Serveur démarré sur le port 3030');
             done();
         });
     });
