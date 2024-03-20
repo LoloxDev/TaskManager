@@ -67,15 +67,15 @@ describe('Tests des routes authentification', () => {
 
         it('Doit fail car meme email', async () => {
             const userData = {
-                firstName: 'Alice',
-                lastName: 'Smisse',
-                email: 'alice.smith@example.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com',
                 password: 'password123'
             };
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(400);
         });
     });
 

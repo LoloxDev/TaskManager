@@ -11,9 +11,9 @@ if (!fs.existsSync(logsDirectory)) {
 const logFilePath = path.join(logsDirectory, 'access.log');
 
 const loggingMiddleware = (req, res, next) => {
-    const logMessage = `${new Date().toISOString()} - ${req.method} ${req.url}\n`;
+    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const logMessage = `${new Date().toISOString()} - ${req.method} ${req.url} - User: ${req.session.user ? req.session.user.id : 'anonymous'} - IP: ${ipAddress} - Request Data: ${JSON.stringify(req.body)} - Query Parameters: ${JSON.stringify(req.query)}\n`;
 
-    // Ajouter le message de log au fichier access.log
     fs.appendFile(logFilePath, logMessage, (err) => {
         if (err) {
             console.error('Erreur lors de l\'écriture du log :', err);

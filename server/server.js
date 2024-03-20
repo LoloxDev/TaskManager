@@ -28,14 +28,14 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Middleware pour le logging
-app.use(loggingMiddleware);
+// Middleware pour traiter les données JSON
+app.use(express.json());
 
 // Middleware pour analyser les données de formulaire
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware pour traiter les données JSON
-app.use(express.json());
+// Middleware pour le logging
+app.use(loggingMiddleware);
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));
