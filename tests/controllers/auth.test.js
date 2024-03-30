@@ -1,56 +1,29 @@
 const request = require('supertest');
-const express = require('express');
-const session = require('express-session');
-const authRoutes = require('./../server/app/routes/authRoutes');
-const userModel = require('./../server/app/models/userModel');
-const bcrypt = require('bcrypt');
+const { startServer, configureUserModelMock, closeServer, app } = require('../config/setup'); 
+const authRoutes = require('../../server/app/routes/authRoutes');
 
-const app = express();
-
-app.use(express.json());
-app.use(session({ secret: 'keyTest', resave: false, saveUninitialized: false }));
+let server;
 
 app.use('/auth', authRoutes);
 
-jest.mock('./../server/app/models/userModel');
+// ***************
+// ** LIFECYCLE **
+// ***************
 
-// CONFIGS //
-
-let server;
-beforeAll((done) => {
-
-    // Lancement serveur
-    server = app.listen(3030, () => {
-        console.log('Serveur démarré sur le port 3030');
-        done();
-    });
-
-    // Création du mock
-    userModel.findByEmail.mockImplementation((email) => {
-        if (email === 'john.doe@example.com') {
-            return {
-                email: 'john.doe@example.com',
-                password: bcrypt.hashSync('password123', 10)
-            };
-        } else {
-            return null;
-        }
-    });
+beforeAll(async () => {
+    server = await startServer();
+    configureUserModelMock();
 });
 
-afterEach(() => {
-    jest.clearAllMocks();
+afterAll(async () => {
+    await closeServer(server);
 });
 
-afterAll((done) => {
-    jest.restoreAllMocks();
-    server.close(done);
-});
-
-// TESTS //
+// ***********
+// ** TESTS **
+// ***********
 
 describe('Tests des routes authentification', () => {
-
     describe('Inscription', () => {
         it('Doit inscrire un utilisateur Alice', async () => {
             const userData = {
@@ -65,7 +38,7 @@ describe('Tests des routes authentification', () => {
             expect(response.status).toBe(302);
         });
 
-        it('Doit fail car meme email', async () => {
+        it('Doit échouer car même email', async () => {
             const userData = {
                 firstName: 'John',
                 lastName: 'Doe',
@@ -80,7 +53,6 @@ describe('Tests des routes authentification', () => {
     });
 
     describe('Connexion', () => {
-
         it('Doit se connecter à l\'utilisateur John Doe', async () => {
             const userData = {
                 email: 'john.doe@example.com',
@@ -90,9 +62,11 @@ describe('Tests des routes authentification', () => {
                 .post('/auth/login')
                 .send(userData);
             expect(response.status).toBe(302);
+            expect(response.header['set-cookie']).toBeDefined();
+            expect(response.header['location']).toBe('/taskPanel');
         });
 
-        it('Doit fail car identifiants invalides', async () => {
+        it('Doit échouer car identifiants invalides', async () => {
             const userData = {
                 email: 'john.doe@example.com',
                 password: 'wrongpassword'
@@ -102,6 +76,14 @@ describe('Tests des routes authentification', () => {
                 .send(userData);
             expect(response.status).toBe(401);
         });
+    });
 
+    describe('Déconnexion', () => {
+        it('Doit se déconnecter de l\'utilisateur', async () => {
+            const response = await request(app).get('/auth/logout');
+            expect(response.status).toBe(302);
+            expect(response.header['location']).toBe('/login');
+            expect(response.header['set-cookie']).toBeUndefined();
+        });
     });
 });
