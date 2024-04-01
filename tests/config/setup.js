@@ -17,17 +17,6 @@ jest.mock('../../server/app/models/userModel');
 // ** CONFIGS **
 // *************
 
-// DEMARAGE DU SERVEUR
-
-function startServer() {
-    return new Promise((resolve, reject) => {
-        const server = app.listen(6050, () => {
-            console.log('Serveur démarré sur le port 3030');
-            resolve(server);
-        });
-    });
-}
-
 // CREATION DU MOCK USER //
 
 function configureUserModelMock() {
@@ -48,29 +37,20 @@ function configureUserModelMock() {
 async function loginUser(email, password) {
     const agent = request.agent(app);
 
-    const response = await agent.post('/auth/login').send({
+    await agent.post('/auth/login').send({
         email: email,
         password: password
     });
 
+    // Créer un objet session pour simuler l'authentification
+    agent.session = { authenticated: true };
+
     return agent;
-}
+};
 
-// FERMETURE DU SERVEUR
-
-function closeServer(server) {
-    return new Promise((resolve, reject) => {
-        server.close(() => {
-            console.log('Serveur arrêté');
-            resolve();
-        });
-    });
-}
 
 module.exports = {
-    startServer,
     configureUserModelMock,
-    closeServer,
     loginUser,
     app
 };

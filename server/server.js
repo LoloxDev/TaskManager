@@ -15,7 +15,7 @@ const frontRoute = require('./app/routes/frontRoutes');
 
 // Initialisation de l'application Express
 const app = express();
-const port = process.env.PORT || 3033;
+const port = process.env.PORT || 3030;
 
 // Configuration du moteur de template EJS
 app.set('view engine', 'ejs');

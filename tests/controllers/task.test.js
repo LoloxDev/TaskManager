@@ -11,12 +11,7 @@ app.use('/tasks', taskRoutes);
 // ***************
 
 beforeAll(async () => {
-    server = await startServer();
     configureUserModelMock();
-});
-
-afterAll(async () => {
-    await closeServer(server);
 });
 
 // ***********
