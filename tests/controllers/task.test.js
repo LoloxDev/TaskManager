@@ -1,43 +1,34 @@
 const request = require('supertest');
-const { startServer, configureUserModelMock, closeServer, app, loginUser } = require('../config/setup');
+const { configureUserModelMock, configureTaskModelMock, app } = require('../config/setup');
 const taskRoutes = require('../../server/app/routes/taskRoutes');
+const session = require('supertest-session');
+const authRoutes = require('../../server/app/routes/authRoutes');
 
-let server;
-
+app.use('/auth', authRoutes);
 app.use('/tasks', taskRoutes);
 
-// ***************
-// ** LIFECYCLE **
-// ***************
+// Injecter l'application express dans supertest-session
+const testSession = session(app);
 
+// Avant chaque test, configurer le mock de user & tasks
 beforeAll(async () => {
     configureUserModelMock();
+    configureTaskModelMock();
 });
-
-// ***********
-// ** TESTS **
-// ***********
 
 describe('Tests des routes de gestion des tâches', () => {
 
-    let agent;
+    it('Doit récupérer toutes les tâches de l\'utilisateur', async () => {
+        // Se connecter
+        await testSession.post('/auth/login')
+            .send({ email: 'john.doe@example.com', password: 'password123' })
+            .expect(302);
 
-    beforeEach(async () => {
-        agent = await loginUser('john.doe@example.com', 'password123');
-        console.log(agent)
+        // Récupérer les tâches
+        const response = await testSession.get('/tasks/tasks');
+
+        // Vérifier le statut de la réponse
+        expect(response.status).toBe(200);
+
     });
-
-
-    describe('Récupérer toutes les tâches de l\'utilisateur', () => {
-        it('Doit récupérer toutes les tâches de l\'utilisateur', async () => {
-
-            const response = await agent.get('/tasks/tasks');
-
-            expect(response.status).toBe(200);
-            // Vérifier la structure des données retournées si nécessaire
-            // expect(response.body).toEqual(/* Structure de données attendue */);
-        });
-    });
-
-    // Ajoutez des tests similaires pour les fonctions restantes (éditer une tâche, supprimer une tâche)
 });
