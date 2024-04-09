@@ -38,60 +38,69 @@ describe('Tests des routes de gestion des tâches', () => {
 
             const response = await testSession.get('/tasks/tasks');
 
+            console.log(response.body);
             expect(response.status).toBe(200);
         });
 
     });
 
-    // AJOUT D'UNE TACHE
-    it('Devrait ajouter une nouvelle tâche pour l\'utilisateur', async () => {
-        await testSession.post('/auth/login')
-            .send({ email: 'john.doe@example.com', password: 'password123' })
-            .expect(302);
-    
-        const newTask = {
-            taskName: 'Nouvelle tâche',
-            taskStatus: false
-        };
-        const response = await testSession.post('/tasks/tasks')
-            .send(newTask)
-            .expect(200);
-    
-        expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe('Tâche ajoutée avec succès');
+    describe('Ajout de tâches', () => {
+
+        it('Devrait ajouter une nouvelle tâche pour l\'utilisateur', async () => {
+            await testSession.post('/auth/login')
+                .send({ email: 'john.doe@example.com', password: 'password123' })
+                .expect(302);
+        
+            const newTask = {
+                taskName: 'Nouvelle tâche',
+                taskStatus: false
+            };
+            const response = await testSession.post('/tasks/tasks')
+                .send(newTask)
+                .expect(200);
+        
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toBe('Tâche ajoutée avec succès');
+        });
     });
 
-    // MODIFICATION D'UNE TACHE
-    it('Devrait modifier une tâche existante pour l\'utilisateur', async () => {
-        await testSession.post('/auth/login')
-            .send({ email: 'john.doe@example.com', password: 'password123' })
-            .expect(302);
+    describe('Modification de tâches', () => {
 
-        const editedTask = {
-            taskId: 1,
-            taskName: 'Nom_modifié',
-            taskStatus: true
-        };
-        const response = await testSession.put(`/tasks/tasks/${editedTask.taskId}`)
-            .send(editedTask)
-            .expect(200);
+        it('Devrait modifier une tâche existante pour l\'utilisateur', async () => {
+            await testSession.post('/auth/login')
+                .send({ email: 'john.doe@example.com', password: 'password123' })
+                .expect(302);
 
-        expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe('Tâche modifiée avec succès');
+            const editedTask = {
+                taskId: 1,
+                taskName: 'Nom_modifié',
+                taskStatus: true
+            };
+            const response = await testSession.put(`/tasks/tasks/${editedTask.taskId}`)
+                .send(editedTask)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toBe('Tâche modifiée avec succès');
+        });
+
     });
 
-    // SUPPRESSION D'UNE TACHE
-    it('Devrait supprimer une tâche existante pour l\'utilisateur', async () => {
-        await testSession.post('/auth/login')
-            .send({ email: 'john.doe@example.com', password: 'password123' })
-            .expect(302);
+    describe('Suppression de tâches', () => {
 
-        const taskId = 1;
-        const response = await testSession.delete(`/tasks/tasks/${taskId}`)
-            .expect(200);
+        it('Devrait supprimer une tâche existante pour l\'utilisateur', async () => {
+            await testSession.post('/auth/login')
+                .send({ email: 'john.doe@example.com', password: 'password123' })
+                .expect(302);
 
-        expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe('Tâche supprimée avec succès');
+            const taskId = 1;
+            const response = await testSession.delete(`/tasks/tasks/${taskId}`)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toBe('Tâche supprimée avec succès');
+        });
+        
     });
 });
 

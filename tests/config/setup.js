@@ -18,6 +18,7 @@ function configureUserModelMock() {
     userModel.findByEmail.mockImplementation((email) => {
         if (email === 'john.doe@example.com') {
             return {
+                id: 123,
                 email: 'john.doe@example.com',
                 password: bcrypt.hashSync('password123', 10)
             };
@@ -32,10 +33,10 @@ function configureUserModelMock() {
 function configureTaskModelMock() {
     taskModel.getAllTasksByUserId.mockImplementation((userId) => {
         // Simulez le comportement de la fonction getAllTasksByUserId en fonction de l'ID de l'utilisateur
-        if (userId === '123') {
+        if (userId === 123) { // Utiliser le même ID d'utilisateur ici
             return [
-                { id: 1, title: 'Task 1', userId: '123' },
-                { id: 2, title: 'Task 2', userId: '123' },
+                { id: 1, title: 'Task 1', userId: 123 },
+                { id: 2, title: 'Task 2', userId: 123 },
             ];
         } else {
             return [];
