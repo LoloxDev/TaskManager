@@ -32,6 +32,8 @@
     "uninstall": "^0.0.0"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^8.2.6",
+    "@stryker-mutator/jest-runner": "^8.2.6",
     "jest": "^29.7.0",
     "supertest": "^6.3.4",
     "supertest-session": "^5.0.1"

@@ -1,4 +1,4 @@
-// knexfile.js
+// Knex configurations
 module.exports = {
     development: {
       client: process.env.DB_TYPE,
