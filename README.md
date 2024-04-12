@@ -97,3 +97,23 @@ L'application sera accessible à l'adresse suivante : [http://localhost:3033](ht
 ---
 
 Cette liste peut évoluer en fonction des besoins et des retours des utilisateurs.
+
+## Tests
+
+- Pour lancer les tests :
+
+```bash
+npm test
+```
+
+- Pour lancer un test en particulier :
+
+```bash
+npm test tests/cheminVersLeTest...
+```
+
+- Pour lancer les tests mutants :
+
+```bash
+npm test npx stryker run
+```

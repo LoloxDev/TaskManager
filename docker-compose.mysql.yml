@@ -9,7 +9,7 @@ services:
       - DB_TYPE=${DB_TYPE}
     volumes:
       - .data:/var/lib
-      - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./server/init-scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     restart: always
