@@ -1,5 +1,5 @@
 -- Connexion à la base de données taskmanager
-\c taskmanager;
+\set dbname `echo $DB_NAME`
 
 -- Structure de la table `tasks`
 CREATE TABLE IF NOT EXISTS tasks (

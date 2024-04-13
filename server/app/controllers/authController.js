@@ -1,4 +1,3 @@
-const dbConnection = require('../../config/db'); // Importez la connexion à la base de données depuis votre configuration
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 

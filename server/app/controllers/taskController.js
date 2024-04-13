@@ -1,4 +1,3 @@
-const dbConnection = require('../../config/db');
 const taskModel = require('../models/taskModel');
 
 // Récupérer toutes les tâches de l'utilisateur
