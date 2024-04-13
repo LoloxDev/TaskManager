@@ -1,13 +1,8 @@
-const dbConnection = require('../../config/db');
 const taskModel = require('../models/taskModel');
 
 // Récupérer toutes les tâches de l'utilisateur
 exports.getAllTasks = async (req, res) => {
     try {
-        // Assurez-vous que l'utilisateur est authentifié
-        if (!req.session.authenticated) {
-            return res.status(401).json({ error: 'Utilisateur non authentifié' });
-        }
 
         // Récupérez les tâches associées à l'utilisateur depuis la table de jointure
         let tasks = await taskModel.getAllTasksByUserId(req.session.user.id);

@@ -15,7 +15,7 @@ const frontRoute = require('./app/routes/frontRoutes');
 
 // Initialisation de l'application Express
 const app = express();
-const port = process.env.PORT || 3033;
+const port = process.env.PORT || 3030;
 
 // Configuration du moteur de template EJS
 app.set('view engine', 'ejs');
@@ -28,14 +28,14 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Middleware pour le logging
-app.use(loggingMiddleware);
+// Middleware pour traiter les données JSON
+app.use(express.json());
 
 // Middleware pour analyser les données de formulaire
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware pour traiter les données JSON
-app.use(express.json());
+// Middleware pour le logging
+app.use(loggingMiddleware);
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));

@@ -1,4 +1,3 @@
-const dbConnection = require('../../config/db'); // Importez la connexion à la base de données depuis votre configuration
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 
@@ -38,8 +37,6 @@ exports.register = async (req, res) => {
 // Fonction de connexion de l'utilisateur
 exports.login = async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body)
-    console.log(email, password)
 
     try {
         // Recherchez l'utilisateur dans la base de données

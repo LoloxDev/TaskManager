@@ -1,5 +1,4 @@
 const dbConnection = require('../../config/db'); // Importez la connexion à la base de données depuis votre configuration
-const bcrypt = require('bcrypt');
 
 // Rechercher un utilisateur par son adresse e-mail
 exports.findByEmail = async (email) => {

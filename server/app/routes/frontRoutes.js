@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const isAuthenticated = require('../middlewares/authMiddleware');
 
 // Route pour la page de connexion
 router.get('/login', (req, res) => {
@@ -12,7 +13,7 @@ router.get('/register', (req, res) => {
 });
 
 // Route pour la page de connexion
-router.get('/taskPanel', (req, res) => {
+router.get('/taskPanel', isAuthenticated, (req, res) => {
     res.render('taskPanel');
 });
 

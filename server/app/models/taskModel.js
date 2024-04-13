@@ -34,7 +34,7 @@ exports.addTaskForUser = async (taskData, userId) => {
 exports.editTask = async (taskId, taskDetails) => {
     try {
         await dbConnection('tasks').where('id', taskId).update(taskDetails);
-        return true; // Modification réussie
+        return true;
     } catch (error) {
         console.error('Erreur lors de la modification de la tâche :', error);
         throw error;
