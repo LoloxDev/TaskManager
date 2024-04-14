@@ -1,12 +1,21 @@
+/**
+ * @module authController
+ */
+
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 
-// Fonction pour l'inscription d'un nouvel utilisateur
+/**
+ * Inscription d'un nouvel utilisateur.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Promise<void>} 
+ * @memberof module:authController
+ */
 exports.register = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
-    console.log(password)
-    const hashedPassword = bcrypt.hashSync(password, 10); // Hachage du mot de passe
-    console.log(hashedPassword)
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
     const userData = {
         nom: firstName,
@@ -16,15 +25,12 @@ exports.register = async (req, res) => {
     };
 
     try {
-        // Vérifier si l'email existe déjà en base
         const existingUser = await userModel.findByEmail(email);
         if (existingUser) {
-            // L'email existe déjà, renvoyer un message d'erreur
             console.log('Email déjà utilisé');
             return res.status(400).json({ error: 'Cet email est déjà utilisé', success: false });
         }
 
-        // L'email n'existe pas, ajouter l'utilisateur
         await userModel.addUser(userData);
         console.log('Utilisateur ajouté avec succès !');
         res.redirect('/login?success=true');
@@ -34,17 +40,20 @@ exports.register = async (req, res) => {
     }
 };
 
-// Fonction de connexion de l'utilisateur
+/**
+ * Connexion de l'utilisateur.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Promise<void>} 
+ * @memberof module:authController
+ */
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Recherchez l'utilisateur dans la base de données
         const user = await userModel.findByEmail(email);
 
-        // Vérifiez si l'utilisateur existe et si le mot de passe est correct
         if (user && bcrypt.compareSync(password, user.password)) {
-            // Initialisez la session et redirigez l'utilisateur
             req.session.regenerate(function (err) {
                 if (err) {
                     console.error('Erreur lors de la régénération de la session :', err);
@@ -61,7 +70,6 @@ exports.login = async (req, res) => {
                 });
             });
         } else {
-            // Identifiants invalides, renvoyer un message d'erreur
             res.status(401).json({ error: 'Identifiants invalides', success: false });
         }
     } catch (error) {
@@ -70,7 +78,13 @@ exports.login = async (req, res) => {
     }
 };
 
-// Fonction de déconnexion de l'utilisateur
+/**
+ * Déconnexion de l'utilisateur.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {void}
+ * @memberof module:authController
+ */
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {

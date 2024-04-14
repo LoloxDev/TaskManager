@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": ["server/app"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs",
+    "moduleIndex": true
+  }
+}

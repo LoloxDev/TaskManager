@@ -1,15 +1,22 @@
+/**
+ * @module taskController
+ */
+
 const taskModel = require('../models/taskModel');
 
-// Récupérer toutes les tâches de l'utilisateur
+/**
+ * Récupère toutes les tâches de l'utilisateur.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Promise<void>} 
+ * @memberof module:taskController
+ */
 exports.getAllTasks = async (req, res) => {
     try {
-
-        // Récupérez les tâches associées à l'utilisateur depuis la table de jointure
         let tasks = await taskModel.getAllTasksByUserId(req.session.user.id);
 
-        // Filtrer les tâches par statut si spécifié dans la requête
         if (req.query.status !== undefined) {
-            const status = req.query.status === 'true'; // Convertir en booléen
+            const status = req.query.status === 'true';
             tasks = tasks.filter(task => task.isdone === status);
         }
 
@@ -20,7 +27,13 @@ exports.getAllTasks = async (req, res) => {
     }
 };
 
-// Ajouter une nouvelle tâche pour l'utilisateur
+/**
+ * Ajoute une nouvelle tâche pour l'utilisateur.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Promise<void>} 
+ * @memberof module:taskController
+ */
 exports.addTask = async (req, res) => {
     const { taskName, taskStatus } = req.body;
     const task = {
@@ -38,7 +51,13 @@ exports.addTask = async (req, res) => {
     }
 };
 
-// Modifier une tâche existante
+/**
+ * Modifie une tâche existante.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Promise<void>} 
+ * @memberof module:taskController
+ */
 exports.editTask = async (req, res) => {
     const { taskId, taskName, taskStatus } = req.body;
     const task = {
@@ -55,7 +74,13 @@ exports.editTask = async (req, res) => {
     }
 };
 
-// Supprimer une tâche existante
+/**
+ * Supprime une tâche existante.
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Promise<void>} 
+ * @memberof module:taskController
+ */
 exports.deleteTask = async (req, res) => {
     const taskId = req.params.id;
 
