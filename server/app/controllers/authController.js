@@ -13,7 +13,7 @@ const userModel = require('../models/userModel');
  * @memberof module:authController
  */
 exports.register = async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
 
     const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -21,7 +21,8 @@ exports.register = async (req, res) => {
         nom: firstName,
         prenom: lastName,
         email: email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: role
     };
 
     try {

@@ -81,6 +81,16 @@
                 <div class="mb-3">
                     <input type="password" class="form-control" placeholder="Mot de passe" id="password" name="password" required>
                 </div>
+                <div class="mb-3">
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="" disabled selected hidden>Rôle</option>
+                        <option value="super">Super-Administrateur</option>
+                        <option value="admin">Administrateur</option>
+                        <option value="cdp">Chef de projet</option>
+                        <option value="dev">Développeur</option>
+                        <option value="guest">Visiteur</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-success btn-block signup-btn">S'inscrire</button>
             </form>
         </div>
