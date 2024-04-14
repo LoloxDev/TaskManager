@@ -117,3 +117,11 @@ npm test tests/cheminVersLeTest...
 ```bash
 npm test npx stryker run
 ```
+
+## Documentation
+
+- Pour lancer le compile de doc : 
+
+```bash
+npx jsdoc -c jsdoc.json
+```
