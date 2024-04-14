@@ -5,6 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const rolesMiddleware = require('../middlewares/rolesMiddleware');
 
 /**
  * GET /api/user
@@ -13,7 +14,7 @@ const userController = require('../controllers/userController');
  * @function
  * @memberof module:userRoutes
  */
-router.get('/user', userController.getUserConnected);
+router.get('/user', rolesMiddleware(['admin', 'super']), userController.getUserConnected);
 
 /**
  * GET /api/userByEmail
@@ -22,6 +23,6 @@ router.get('/user', userController.getUserConnected);
  * @function
  * @memberof module:userRoutes
  */
-router.get('/userByEmail', userController.getUserByEmail);
+router.get('/userByEmail', rolesMiddleware(['admin', 'super']), userController.getUserByEmail); // Utilisation du middleware pour sécuriser la route
 
 module.exports = router;

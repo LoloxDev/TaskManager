@@ -27,12 +27,13 @@ exports.findByEmail = async (email) => {
  * @param {string} userData.prenom
  * @param {string} userData.email
  * @param {string} userData.password
+ * @param {string} userData.role
  * @returns {Promise<void>}
  * @memberof module:userModel
  */
-exports.addUser = async ({ nom, prenom, email, password }) => {
+exports.addUser = async ({ nom, prenom, email, password, role }) => {
     try {
-        await dbConnection('users').insert({ nom, prenom, email, password });
+        await dbConnection('users').insert({ nom, prenom, email, password, role });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
         throw new Error('Erreur lors de l\'ajout de l\'utilisateur');
