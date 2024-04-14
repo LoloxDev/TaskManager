@@ -1,6 +1,15 @@
-const dbConnection = require('../../config/db'); // Importez la connexion à la base de données depuis votre configuration
+/**
+ * @module taskModel
+ */
 
-// Récupérer toutes les tâches associées à un utilisateur
+const dbConnection = require('../../config/db');
+
+/**
+ * Récupère toutes les tâches associées à un utilisateur.
+ * @param {number} userId
+ * @returns {Promise<Array<Object>>}
+ * @memberof module:taskModel
+ */
 exports.getAllTasksByUserId = async (userId) => {
     try {
         const tasks = await dbConnection('user_tasks')
@@ -14,7 +23,13 @@ exports.getAllTasksByUserId = async (userId) => {
     }
 };
 
-// Ajouter une nouvelle tâche pour un utilisateur
+/**
+ * Ajoute une nouvelle tâche pour un utilisateur.
+ * @param {Object} taskData
+ * @param {number} userId
+ * @returns {Promise<void>}
+ * @memberof module:taskModel
+ */
 exports.addTaskForUser = async (taskData, userId) => {
     try {
         const [newTaskIdObject] = await dbConnection('tasks').insert(taskData).returning('id');
@@ -30,7 +45,13 @@ exports.addTaskForUser = async (taskData, userId) => {
     }
 };
 
-// Modifier une tâche existante
+/**
+ * Modifie une tâche existante.
+ * @param {number} taskId
+ * @param {Object} taskDetails
+ * @returns {Promise<boolean>}
+ * @memberof module:taskModel
+ */
 exports.editTask = async (taskId, taskDetails) => {
     try {
         await dbConnection('tasks').where('id', taskId).update(taskDetails);
@@ -41,7 +62,12 @@ exports.editTask = async (taskId, taskDetails) => {
     }
 };
 
-// Supprimer une tâche existante
+/**
+ * Supprime une tâche existante.
+ * @param {number} taskId
+ * @returns {Promise<boolean>}
+ * @memberof module:taskModel
+ */
 exports.deleteTask = async (taskId) => {
     try {
         await dbConnection('tasks').where('id', taskId).del();

@@ -1,6 +1,15 @@
-const dbConnection = require('../../config/db'); // Importez la connexion à la base de données depuis votre configuration
+/**
+ * @module userModel
+ */
 
-// Rechercher un utilisateur par son adresse e-mail
+const dbConnection = require('../../config/db');
+
+/**
+ * Recherche un utilisateur par son adresse e-mail.
+ * @param {string} email
+ * @returns {Promise<Object|null>}
+ * @memberof module:userModel
+ */
 exports.findByEmail = async (email) => {
     try {
         const user = await dbConnection('users').where('email', email).first();
@@ -11,9 +20,17 @@ exports.findByEmail = async (email) => {
     }
 };
 
-// Ajouter un nouvel utilisateur à la base de données
+/**
+ * Ajoute un nouvel utilisateur à la base de données.
+ * @param {Object} userData
+ * @param {string} userData.nom
+ * @param {string} userData.prenom
+ * @param {string} userData.email
+ * @param {string} userData.password
+ * @returns {Promise<void>}
+ * @memberof module:userModel
+ */
 exports.addUser = async ({ nom, prenom, email, password }) => {
-
     try {
         await dbConnection('users').insert({ nom, prenom, email, password });
     } catch (error) {
@@ -21,4 +38,3 @@ exports.addUser = async ({ nom, prenom, email, password }) => {
         throw new Error('Erreur lors de l\'ajout de l\'utilisateur');
     }
 };
-
