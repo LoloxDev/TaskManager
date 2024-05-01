@@ -1,19 +1,22 @@
-// Knex configurations
+const fs = require('fs');
+const path = require('path');
 module.exports = {
-    development: {
-      client: process.env.DB_TYPE,
-      connection: {
-        user: process.env.DB_USER,
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-      },
-      migrations: {
-        tableName: 'knex_migrations',
-        directory: './migrations',
-      },
-      seeds: {
-        directory: './seeds',
-      },
+  development: {
+    client: process.env.DB_TYPE,
+    connection: {
+      connectionString: process.env.PG_CONNECTION_STRING,
+      ssl: {
+        cert: fs.readFileSync('server/config/postgres_ssl/certs/out/postgres.crt'),
+        key: fs.readFileSync('server/config/postgres_ssl/certs/out/postgres.key'),
+        rejectUnauthorized: false
+      }     
     },
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: './migrations',
+    },
+    seeds: {
+      directory: './seeds',
+    },
+  },
 };

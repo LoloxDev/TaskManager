@@ -28,7 +28,6 @@ exports.register = async (req, res) => {
     try {
         const existingUser = await userModel.findByEmail(email);
         if (existingUser) {
-            console.log('Email déjà utilisé');
             return res.status(400).json({ error: 'Cet email est déjà utilisé', success: false });
         }
 
