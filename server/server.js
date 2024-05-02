@@ -4,8 +4,11 @@ console.log(process.env);
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const loggingMiddleware = require('./app/middlewares/loggingMiddleware');
 const bodyParser = require('body-parser');
+
+// Import des middlewares
+const loggingMiddleware = require('./app/middlewares/loggingMiddleware');
+const rateLimiter = require('./app/middlewares/requestLimitMiddleware');
 
 // Import des routes
 const authRoutes = require('./app/routes/authRoutes');
@@ -27,6 +30,9 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+
+// Middleware pour la limitation de débit
+app.use(rateLimiter);
 
 // Middleware pour traiter les données JSON
 app.use(express.json());
