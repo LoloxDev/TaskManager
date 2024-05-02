@@ -26,7 +26,9 @@ exports.getAllTasksByUserId = async (userId) => {
 /**
  * Ajoute une nouvelle tâche pour un utilisateur.
  * @param {Object} taskData
- * @param {number} userId
+ * @param {string} taskData.name
+ * @param {boolean} taskData.isdone
+ * @param {number} taskData.userId
  * @returns {Promise<void>}
  * @memberof module:taskModel
  */

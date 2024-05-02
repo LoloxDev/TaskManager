@@ -1,10 +1,10 @@
 FROM postgres:13-alpine
 
-COPY ./certs/out/postgresdb.key /var/lib/postgresql
-COPY ./certs/out/postgresdb.crt /var/lib/postgresql
+COPY ./certs/out/db/postgresdb.key /var/lib/postgresql
+COPY ./certs/out/db/postgresdb.crt /var/lib/postgresql
 
-COPY ./certs/out/myCA.crt /var/lib/postgresql
-COPY ./certs/out/myCA.crl /var/lib/postgresql
+COPY ./certs/out/ca/myCA.crt /var/lib/postgresql
+COPY ./certs/out/ca/myCA.crl /var/lib/postgresql
 
 COPY ./ssl-conf.sh /usr/local/bin
 

@@ -6,8 +6,8 @@ module.exports = {
     connection: {
       connectionString: process.env.PG_CONNECTION_STRING,
       ssl: {
-        cert: fs.readFileSync('server/config/postgres_ssl/certs/out/postgres.crt'),
-        key: fs.readFileSync('server/config/postgres_ssl/certs/out/postgres.key'),
+        cert: fs.readFileSync('server/config/postgres_ssl/certs/out/client/postgres.crt'),
+        key: fs.readFileSync('server/config/postgres_ssl/certs/out/client/postgres.key'),
         rejectUnauthorized: false
       }     
     },
