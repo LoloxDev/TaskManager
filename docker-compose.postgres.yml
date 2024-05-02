@@ -1,6 +1,6 @@
 services:
   mon_postgres:
-    image: postgres
+    image: postgres:ssl
     container_name: postgres
     environment:
       - POSTGRES_USER=${DB_USER}
@@ -8,8 +8,8 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - DB_TYPE=${DB_TYPE}
     volumes:
-      - .data:/var/lib
-      - ./server/init-scripts:/docker-entrypoint-initdb.d
+      - .data:/var/lib/postgresql/volumes
+      - ./server/config/init-scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     restart: always

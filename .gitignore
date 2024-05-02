@@ -5,3 +5,4 @@ coverage/
 data/
 reports/
 docs
+server/config/postgres_ssl/certs
