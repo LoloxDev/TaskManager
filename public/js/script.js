@@ -26,27 +26,26 @@ function stylizeButton(button, success, message) {
     }, 1500);
 }
 
-document.getElementById('getUser').addEventListener('click', function(){
-    fetch(`/user`, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-})
-
 // Récupération des infos session utilisateur
 async function getUser() {
-    try {
-        const response = await fetch('/user');
-        const data = await response.json();
-        console.log(data.user);
-        return data.user;
-    } catch (error) {
-        console.error('Erreur lors de la récupération des informations de session :', error);
-        throw error; // Vous pouvez gérer cette erreur de manière appropriée
+    const response = await fetch('/user/whoAmI');
+    if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des informations de session');
     }
+    const data = await response.json();
+    console.log(data.user);
+    return data.user;
 }
+
+document.getElementById('getUser').addEventListener('click', async function() {
+    try {
+        const user = await getUser();
+        console.log('Utilisateur récupéré :', user);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'utilisateur :', error);
+    }
+});
+
 
 // Personnalisation user
 async function personnaliserUtilisateur() {

@@ -15,7 +15,6 @@ const isAuthenticated = (req, res, next) => {
         next();
     } else {
         res.redirect('/login');
-        // res.status(401).json({ error: 'Utilisateur non authentifié', success: false });
     }
 };
 

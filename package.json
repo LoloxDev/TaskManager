@@ -29,7 +29,9 @@
     "mysql2": "^3.6.1",
     "nodemon": "^3.0.2",
     "pg": "^8.11.3",
-    "uninstall": "^0.0.0"
+    "uninstall": "^0.0.0",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@stryker-mutator/core": "^8.2.6",

@@ -8,13 +8,13 @@ const userController = require('../controllers/userController');
 const rolesMiddleware = require('../middlewares/rolesMiddleware');
 
 /**
- * GET /api/user
+ * GET /api/whoAmI
  * Route pour récupérer l'utilisateur connecté.
- * @name GET /api/user
+ * @name GET /api/whoAmI
  * @function
  * @memberof module:userRoutes
  */
-router.get('/user', rolesMiddleware(['admin', 'super']), userController.getUserConnected);
+router.get('/whoAmI', rolesMiddleware(['super']), userController.getUserConnected);
 
 /**
  * GET /api/userByEmail

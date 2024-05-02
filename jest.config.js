@@ -4,5 +4,12 @@ module.exports = {
   testEnvironment: 'node',
   coverageDirectory: 'coverage',
   collectCoverage: true,
-  collectCoverageFrom: ['**/*.{js,jsx}', '!**/node_modules/**', '!**/coverage/**'],
+  collectCoverageFrom: [
+    'server/app/controllers/**/*.js',
+    '!**/node_modules/**',
+    '!**/coverage/**',
+    '!**/tests/**'
+  ],
+  testMatch: ['<rootDir>/tests/**/*.test.js'],
+  setupFilesAfterEnv: ['<rootDir>/tests/config/setup.js'],
 };

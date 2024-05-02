@@ -1,4 +1,3 @@
-// Knex connection DB
 const knex = require('knex');
 const knexConfig = require('./knexfile');
 

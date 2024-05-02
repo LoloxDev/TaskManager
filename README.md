@@ -115,7 +115,7 @@ npm test tests/cheminVersLeTest...
 - Pour lancer les tests mutants :
 
 ```bash
-npm test npx stryker run
+npx stryker run
 ```
 
 ## Documentation
@@ -125,3 +125,6 @@ npm test npx stryker run
 ```bash
 npx jsdoc -c jsdoc.json
 ```
+
+
+DOC SSL : https://dev.to/danvixent/how-to-setup-postgresql-with-ssl-inside-a-docker-container-5f3

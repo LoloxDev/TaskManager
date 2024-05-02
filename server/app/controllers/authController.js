@@ -9,10 +9,11 @@ const userModel = require('../models/userModel');
  * Inscription d'un nouvel utilisateur.
  * @param {Object} req
  * @param {Object} res
+ * @param {Function} next
  * @returns {Promise<void>} 
  * @memberof module:authController
  */
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
     const { firstName, lastName, email, password, role } = req.body;
 
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -28,16 +29,16 @@ exports.register = async (req, res) => {
     try {
         const existingUser = await userModel.findByEmail(email);
         if (existingUser) {
-            console.log('Email déjà utilisé');
-            return res.status(400).json({ error: 'Cet email est déjà utilisé', success: false });
+            const error = new Error('Cet email est déjà utilisé');
+            error.status = 400;
+            return next(error);
         }
 
         await userModel.addUser(userData);
         console.log('Utilisateur ajouté avec succès !');
         res.redirect('/login?success=true');
     } catch (error) {
-        console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
-        res.status(500).json({ error: 'Erreur lors de l\'ajout de l\'utilisateur', success: false, sqlError: error.sqlMessage });
+        next(error);
     }
 };
 
@@ -45,10 +46,11 @@ exports.register = async (req, res) => {
  * Connexion de l'utilisateur.
  * @param {Object} req
  * @param {Object} res
+ * @param {Function} next
  * @returns {Promise<void>} 
  * @memberof module:authController
  */
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -58,24 +60,25 @@ exports.login = async (req, res) => {
             req.session.regenerate(function (err) {
                 if (err) {
                     console.error('Erreur lors de la régénération de la session :', err);
-                    return res.status(500).json({ error: 'Erreur lors de la connexion', success: false });
+                    return next(err);
                 }
                 req.session.authenticated = true;
                 req.session.user = user;
                 req.session.save(function (err) {
                     if (err) {
                         console.error('Erreur lors de la sauvegarde de la session :', err);
-                        return res.status(500).json({ error: 'Erreur lors de la connexion', success: false });
+                        return next(err);
                     }
                     res.redirect('/taskPanel');
                 });
             });
         } else {
-            res.status(401).json({ error: 'Identifiants invalides', success: false });
+            const error = new Error('Identifiants invalides');
+            error.status = 401;
+            next(error);
         }
     } catch (error) {
-        console.error('Erreur lors de l\'authentification :', error);
-        res.status(500).json({ error: 'Erreur lors de la connexion', success: false });
+        next(error);
     }
 };
 
@@ -83,14 +86,15 @@ exports.login = async (req, res) => {
  * Déconnexion de l'utilisateur.
  * @param {Object} req
  * @param {Object} res
+ * @param {Function} next
  * @returns {void}
  * @memberof module:authController
  */
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Erreur lors de la déconnexion :', err);
-            return res.status(500).json({ error: 'Erreur lors de la déconnexion', success: false });
+            return next(err);
         }
         res.redirect('/login');
     });

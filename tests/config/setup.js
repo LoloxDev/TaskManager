@@ -20,7 +20,8 @@ function configureUserModelMock() {
             return {
                 id: 123,
                 email: 'john.doe@example.com',
-                password: bcrypt.hashSync('password123', 10)
+                password: bcrypt.hashSync('password123', 10),
+                role: 'super'
             };
         } else {
             return null;
@@ -32,8 +33,7 @@ function configureUserModelMock() {
 
 function configureTaskModelMock() {
     taskModel.getAllTasksByUserId.mockImplementation((userId) => {
-        // Simulez le comportement de la fonction getAllTasksByUserId en fonction de l'ID de l'utilisateur
-        if (userId === 123) { // Utiliser le même ID d'utilisateur ici
+        if (userId === 123) {
             return [
                 { id: 1, title: 'Task 1', userId: 123 },
                 { id: 2, title: 'Task 2', userId: 123 },
@@ -47,12 +47,12 @@ function configureTaskModelMock() {
 // SIMULATION DE LA CONNEXION DE L'UTILISATEUR //
 
 async function loginUser(agent, email, password) {
-    await agent.post('/auth/login').send({
+    const response = await agent.post('/auth/login').send({
         email: email,
         password: password
     });
 
-    return agent;
+    return response;
 }
 
 module.exports = {

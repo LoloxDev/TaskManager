@@ -16,10 +16,10 @@ const rolesMiddleware = (roles) => {
      * @returns {void}
      */
     return (req, res, next) => {
-        console.log(req.session.user);
-        if (req.session.user && req.session.user.role && roles.includes(req.session.user.role)) {
+        if (req.session.user && roles.includes(req.session.user.role)) {
             next();
         } else {
+            console.log('Accès interdit');
             res.status(403).json({ error: 'Accès interdit', success: false });
         }
     };

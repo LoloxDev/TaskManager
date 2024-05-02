@@ -2847,6 +2847,10 @@ textarea.form-control-lg {
   opacity: var(--bs-btn-disabled-opacity);
 }
 
+.golden{
+  background-color: #FFD700;
+}
+
 .btn-primary {
   --bs-btn-color: #fff;
   --bs-btn-bg: #64a19d;
