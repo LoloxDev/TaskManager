@@ -16,7 +16,6 @@ const frontRoute = require('./app/routes/frontRoutes');
 const app = express();
 const port = process.env.PORT || 3030;
 
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './app/views'));
 
