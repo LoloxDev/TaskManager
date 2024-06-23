@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                // Étapes de construction de votre application Node.js
+                sh 'npm install'
+                sh 'npm test'
+            }
+        }
+        
+        stage('Security Tests') {
+            steps {
+                // Lancer OWASP ZAP pour effectuer les tests de sécurité
+                sh 'zap.sh -daemon -host localhost -port 8090'
+                sh 'zap-cli --zap-url http://localhost:8090 --quick-scan --spider --ajax'
+            }
+        }
+        
+        stage('Publish Results') {
+            steps {
+                // Publier les résultats des tests de sécurité
+                junit '**/zap/*.xml' // Exemple de publication des résultats XML de ZAP
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Nettoyer ou arrêter OWASP ZAP après les tests
+            sh 'zap-cli -p 8090 shutdown'
+        }
+    }
+}
