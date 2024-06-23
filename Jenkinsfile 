@@ -2,34 +2,43 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/LoloxDev/TaskManager.git'
+            }
+        }
+        
         stage('Build') {
             steps {
-                // Étapes de construction de votre application Node.js
                 sh 'npm install'
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                // Démarrage de OWASP ZAP pour le scan de sécurité
+                sh '/usr/local/bin/zap.sh -daemon -port 8090 -host localhost -config api.disablekey=true'
+
+                // Exécution des tests de sécurité avec OWASP ZAP
+                sh '/usr/local/bin/zap-cli --zap-url http://localhost:8090 -p 8090 -d -f baseline-scan.policy -r report.html'
+
+                // Arrêt de OWASP ZAP après le scan
+                sh '/usr/local/bin/zap-cli --zap-url http://localhost:8090 -p 8090 shutdown'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Exécute les tests Node.js (remplacez par votre commande de test)
                 sh 'npm test'
             }
         }
-        
-        stage('Security Tests') {
-            steps {
-                // Lancer OWASP ZAP pour effectuer les tests de sécurité
-                sh 'zap.sh -daemon -host localhost -port 8090'
-                sh 'zap-cli --zap-url http://localhost:8090 --quick-scan --spider --ajax'
-            }
-        }
-        
-        stage('Publish Results') {
-            steps {
-                // Publier les résultats des tests de sécurité
-                junit '**/zap/*.xml' // Exemple de publication des résultats XML de ZAP
-            }
-        }
     }
-    
+
     post {
         always {
-            // Nettoyer ou arrêter OWASP ZAP après les tests
-            sh 'zap-cli -p 8090 shutdown'
+            // Toujours nettoyer et arrêter OWASP ZAP après le pipeline
+            sh '/usr/local/bin/zap-cli --zap-url http://localhost:8090 -p 8090 shutdown'
         }
     }
 }
