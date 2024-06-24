@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Installer les dépendances
+npm install
+
 OUTPUT_FILE="eslint-result.xml"
 
 # Exécuter ESLint
