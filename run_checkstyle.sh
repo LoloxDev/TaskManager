@@ -2,13 +2,13 @@
 
 # Définir les chemins relatifs
 CHECKSTYLE_CONFIG="checkstyle_configuration.xml"
-SOURCE_DIRECTORY="server"
+SOURCE_DIRECTORY="server"  # Assurez-vous que le chemin est correct
 OUTPUT_FILE="checkstyle-result.xml"
-COMMONS_CLI_JAR="/usr/share/java/commons-cli.jar"
+CHECKSTYLE_JAR="checkstyle-all.jar"
 
-# Vérifier si Checkstyle est installé
-if ! command -v checkstyle &> /dev/null; then
-    echo "Checkstyle could not be found"
+# Vérifier si Checkstyle JAR est présent
+if [ ! -f "$CHECKSTYLE_JAR" ]; then
+    echo "Checkstyle JAR not found: $CHECKSTYLE_JAR"
     exit 1
 fi
 
@@ -26,7 +26,7 @@ fi
 
 # Exécuter Checkstyle
 echo "Running Checkstyle..."
-java -classpath $COMMONS_CLI_JAR:/usr/share/java/checkstyle.jar com.puppycrawl.tools.checkstyle.Main -c $CHECKSTYLE_CONFIG $SOURCE_DIRECTORY > $OUTPUT_FILE
+java -jar $CHECKSTYLE_JAR -c $CHECKSTYLE_CONFIG $SOURCE_DIRECTORY > $OUTPUT_FILE
 CHECKSTYLE_EXIT_CODE=$?
 
 if [ $CHECKSTYLE_EXIT_CODE -ne 0 ]; then
