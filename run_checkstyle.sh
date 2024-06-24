@@ -1,2 +1,9 @@
 #!/bin/bash
-checkstyle -c ~/Project/TaskManager/checkstyle_configuration.xml ~/Project/TaskManager/src > checkstyle-result.xml
+
+# Définir les chemins relatifs
+CHECKSTYLE_CONFIG="checkstyle_configuration.xml"
+SOURCE_DIRECTORY="src"
+OUTPUT_FILE="checkstyle-result.xml"
+
+# Exécuter Checkstyle
+checkstyle -c $CHECKSTYLE_CONFIG $SOURCE_DIRECTORY > $OUTPUT_FILE
