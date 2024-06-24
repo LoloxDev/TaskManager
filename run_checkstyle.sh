@@ -2,7 +2,7 @@
 
 # Définir les chemins relatifs
 CHECKSTYLE_CONFIG="checkstyle_configuration.xml"
-SOURCE_DIRECTORY="src"
+SOURCE_DIRECTORY="server"
 OUTPUT_FILE="checkstyle-result.xml"
 COMMONS_CLI_JAR="/usr/share/java/commons-cli.jar"
 
