@@ -1,22 +1,20 @@
 #!/bin/bash
 
-# Installer les dépendances, y compris le formatteur JUnit
 npm install
 npm install -D eslint-formatter-junit
 
 OUTPUT_FILE="eslint-result.xml"
 
-# Exécuter ESLint et générer le rapport
+# éxecution de esling et génération du rapport
 npx eslint . -f junit -o $OUTPUT_FILE
 ESLINT_EXIT_CODE=$?
 
-# Afficher les erreurs de linting dans la console Jenkins
+# affichage des erreurs dans jenkins
 npx eslint . --format stylish
 
-# Ne pas échouer le build en cas d'erreurs ESLint
+# ne pas échouer le build en cas d'erreurs
 if [ $ESLINT_EXIT_CODE -ne 0 ]; then
-    echo "ESLint found issues in the code. Check the report for details."
-    # Continuer l'exécution du script sans exit 1
+    echo "Des erreurs ESLint ont été détéctés, ouvrir le rapport pour les détails."
 fi
 
-echo "ESLint completed with exit code $ESLINT_EXIT_CODE. Check the report for details."
+echo "EsLint ok : $ESLINT_EXIT_CODE. Ouvrir le rapport pour les détails."
