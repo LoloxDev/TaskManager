@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Installer les dépendances
+# Installer les dépendances, y compris le formatteur JUnit
 npm install
+npm install -D eslint-formatter-junit
 
 OUTPUT_FILE="eslint-result.xml"
 
