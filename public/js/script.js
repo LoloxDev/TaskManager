@@ -3,28 +3,6 @@ const submitButton = document.getElementById('submitButton'); // Bouton submit d
 
 let taskTable = 2; // 0 = tableau de tâches undone, 1 = tâches done, 2 = toutes les tâches
 
-// Méthode de modification de style des boutons selon succes
-function stylizeButton(button, success, message) {
-    if (success) {
-        // Modification de la couleur du bouton et son contenu pour informer l'utilisateur du succès
-        button.style.backgroundColor = 'green';
-        button.textContent = message || 'Opération réussie !';
-    } else {
-        // Modification de la couleur du bouton et son contenu pour informer l'utilisateur de l'échec
-        button.style.backgroundColor = 'red';
-        button.textContent = message || 'Échec de l\'opération';
-
-        setTimeout(() => {
-            button.style.backgroundColor = '';
-            button.textContent = 'Réessayer';
-        }, 1500);
-    }
-
-    setTimeout(() => {
-        button.style.backgroundColor = '';
-        button.textContent = 'Ajouter une tâche'; // ou un texte par défaut si besoin
-    }, 1500);
-}
 
 // Récupération des infos session utilisateur
 async function getUser() {
