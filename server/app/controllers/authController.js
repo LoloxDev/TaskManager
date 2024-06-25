@@ -16,14 +16,20 @@ const userModel = require('../models/userModel');
 exports.register = async (req, res, next) => {
     const { firstName, lastName, email, password, role } = req.body;
 
+    if (!firstName || !lastName || !email || !password || !role) {
+        const error = new Error('Tous les champs doivent être remplis');
+        error.status = 400;
+        return next(error);
+    }
+
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const userData = {
-        nom: firstName,
-        prenom: lastName,
-        email: email,
+        nom: firstName.trim(),
+        prenom: lastName.trim(),
+        email: email.trim(),
         password: hashedPassword,
-        role: role
+        role: role.trim()
     };
 
     try {
@@ -52,6 +58,12 @@ exports.register = async (req, res, next) => {
  */
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+        const error = new Error('Email et mot de passe sont requis');
+        error.status = 400;
+        return next(error);
+    }
 
     try {
         const user = await userModel.findByEmail(email);
