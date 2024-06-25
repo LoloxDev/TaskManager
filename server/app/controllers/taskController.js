@@ -17,6 +17,12 @@ exports.getAllTasks = async (req, res, next) => {
         let tasks = await taskModel.getAllTasksByUserId(req.session.user.id);
 
         if (req.query.status !== undefined) {
+            const validStatuses = ['true', 'false'];
+            if (!validStatuses.includes(req.query.status)) {
+                const error = new Error('Statut de tâche invalide');
+                error.status = 400;
+                return next(error);
+            }
             const status = req.query.status === 'true';
             tasks = tasks.filter(task => task.isdone === status);
         }
@@ -38,6 +44,19 @@ exports.getAllTasks = async (req, res, next) => {
  */
 exports.addTask = async (req, res, next) => {
     const { taskName, taskStatus } = req.body;
+
+    if (!taskName || typeof taskName !== 'string' || taskName.trim().length === 0) {
+        const error = new Error('Nom de tâche invalide');
+        error.status = 400;
+        return next(error);
+    }
+
+    if (!["0", "1", "2"].includes(taskStatus)) {
+        const error = new Error('Statut de tâche invalide');
+        error.status = 400;
+        return next(error);
+    }
+
     const task = {
         name: taskName,
         isdone: taskStatus,
@@ -45,7 +64,6 @@ exports.addTask = async (req, res, next) => {
 
     try {
         await taskModel.addTaskForUser(task, req.session.user.id);
-
         res.status(200).json({ message: 'Tâche ajoutée avec succès', success: true });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la tâche :', error);
@@ -63,6 +81,24 @@ exports.addTask = async (req, res, next) => {
  */
 exports.editTask = async (req, res, next) => {
     const { taskId, taskName, taskStatus } = req.body;
+
+    if (!taskId || typeof taskId !== 'number') {
+        const error = new Error('ID de tâche invalide');
+        error.status = 400;
+        return next(error);
+    }
+    if (!taskName || typeof taskName !== 'string' || taskName.trim().length === 0) {
+        const error = new Error('Nom de tâche invalide');
+        error.status = 400;
+        return next(error);
+    }
+    const validStatuses = [true, false, "0", "1", "2", undefined];
+    if (!validStatuses.includes(taskStatus)) {
+        const error = new Error('Statut de tâche invalide');
+        error.status = 400;
+        return next(error);
+    }
+
     const task = {
         name: taskName,
         isdone: taskStatus,
@@ -88,11 +124,19 @@ exports.editTask = async (req, res, next) => {
 exports.deleteTask = async (req, res, next) => {
     const taskId = req.params.id;
 
+    if (!taskId || typeof taskId !== 'string' || taskId.trim().length === 0) {
+        const error = new Error('ID de tâche invalide');
+        error.status = 400;
+        return next(error);
+    }
+
     try {
         await taskModel.deleteTask(taskId);
+
         res.status(200).json({ message: 'Tâche supprimée avec succès', success: true });
     } catch (error) {
         console.error('Erreur lors de la suppression de la tâche :', error);
         next(error);
     }
+    
 };
